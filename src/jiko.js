@@ -24,13 +24,14 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 (function() {
 
 if (typeof(exports) !== "undefined") { // nodejs
-    var underscore = require("underscore")
+    var underscore = require("underscore");
     underscore.extend(exports, declare(underscore, null));
 } else if (typeof(define) !== "undefined") { // amd
     define(["underscore", "jquery"], declare);
 } else { // define global variable 'nova'
     jiko = declare(_, $);
 }
+
 
 function declare(_, $) {
     var jiko = {};
