@@ -1,5 +1,5 @@
 
-var e = new nova.TemplateEngine();
+var e = new jiko.TemplateEngine();
 var transform = function(x) {
     return _.filter(_.map(x.split(/\s+/), function(el) { return el.trim(); }),
         function(el) { return el; }).join(" ");
