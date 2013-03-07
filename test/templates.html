@@ -1,5 +1,5 @@
 
-{%function name="niceTemplate"%}
+{% function name="niceTemplate" %}
     % var cons = "consectetur";
     <div>
         <h1>Welcome to this empty site.</h1>
@@ -17,83 +17,83 @@
             labore et dolore magna aliqua.
         </p>
     </div>
-{%end%}
-{%function name="yop"%}
+{% end %}
+{% function name="yop" %}
     Hello
-{%end%}
-{%function name="test"%}
+{% end %}
+{% function name="test" %}
     ${test_var}
-{%end%}
-{%function name="test2"%}
+{% end %}
+{% function name="test2" %}
     <% _.each(lst, function(el) { %>
     ${el}
     <% }
     ); %>
-{%end%}
-{%function name="test3"%}
+{% end %}
+{% function name="test3" %}
     % _.each(lst, function(el) { 
     ${el}
     % }); 
-{%end%}
-{%function name="testfct"%}
+{% end %}
+{% function name="testfct" %}
     % var yop = function(arg) {
     ${arg}
     % }; 
     <% yop("abc"); %>
     % yop("def");
-{%end%}
-{%function name="testmacro"%}
+{% end %}
+{% function name="testmacro" %}
     lalala
-{%end%}
-{%function name="testcallmacro"%}
+{% end %}
+{% function name="testcallmacro" %}
     %{engine.testmacro()}
-{%end%}
-{%function name="testescaping"%}
+{% end %}
+{% function name="testescaping" %}
     % var x = "<div></div>";
     ${x}
-{%end%}
-{%function name="testnoescaping"%}
+{% end %}
+{% function name="testnoescaping" %}
     % var x = "<div></div>";
     %{x}
-{%end%}
-{%function name="test_this"%}
+{% end %}
+{% function name="test_this" %}
     ${this.str}
-{%end%}
-{%function name='testDef'%}
-    {%function name="test"%}
+{% end %}
+{% function name='testDef' %}
+    {% function name="test" %}
         Test
-    {%end%}
+    {% end %}
     %{test()}
-{%end%}
-{%function name="testFunctional"%}
+{% end %}
+{% function name="testFunctional" %}
     % var x = "Test";
-    {%function name="test"%}
+    {% function name="test" %}
         ${ x }
-    {%end%}
+    {% end %}
     %{ testFunctional2({test: test}) }
-{%end%}
-{%function name="testFunctional2"%}
+{% end %}
+{% function name="testFunctional2" %}
     <div>
         %{ test() }
     </div>
-{%end%}
+{% end %}
 ## this is a comment
-{%function name="testComment"%}
+{% function name="testComment" %}
     ## this is another comment
     Test
-{%end%}
-{%function name="testMultiComment"%}
-    {*This is 
-    a multi line comment*}
+{% end %}
+{% function name="testMultiComment" %}
+    {* This is 
+    a multi line comment *}
     Test
-{%end%}
-{%function name="multiSingleLine"%}
+{% end %}
+{% function name="multiSingleLine" %}
     % if (true
     %     === true) {
         Test
     % }
-{%end%}
-{%function name="printtest"%}
+{% end %}
+{% function name="printtest" %}
     % print("Test")
-{%end%}
+{% end %}
 
