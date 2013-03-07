@@ -49,10 +49,10 @@ function declare(_, $) {
         return tmp.join("\n");
     };
     var tparams = {
-        def_begin: /<%\s*def\s+(?:name=(?:(?:"(.+?)")|(?:'(.+?)')))\s*>/g,
-        def_end: /<\/%\s*def\s*>/g,
-        comment_multi_begin: /<%\s*doc\s*>/g,
-        comment_multi_end: /<\/%\s*doc\s*>/g,
+        def_begin: /\{%\s*function\s+(?:name=(?:(?:"(.+?)")|(?:'(.+?)')))\s*%\}/g,
+        def_end: /\{\%\s*end\s*%\}/g,
+        comment_multi_begin: /\{\*/g,
+        comment_multi_end: /\*\}/g,
         eval_long_begin: /<%/g,
         eval_long_end: /%>/g,
         eval_short_begin: /(?:^|\n)[[ \t]*%(?!{)/g,
@@ -62,7 +62,6 @@ function declare(_, $) {
         comment_begin: /##/g,
         comment_end: /\n|$/g
     };
-    // /<%\s*def\s+(?:name=(?:"(.+?)"))\s*%>([\s\S]*?)<%\s*def\s*%>/g
     var allbegin = new RegExp(
         "((?:\\\\)*)(" +
         "(" + tparams.def_begin.source + ")|" +

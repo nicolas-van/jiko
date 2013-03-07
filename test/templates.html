@@ -1,80 +1,99 @@
 
-<%def name="yop">
+{%function name="niceTemplate"%}
+    % var cons = "consectetur";
+    <div>
+        <h1>Welcome to this empty site.</h1>
+        <p>
+            Lorem ipsum <a href="http://google.com">dolor sit amet</a>, ${cons} <em>adipisicing</em> elit, sed do
+            <strong>eiusmod</strong> tempor incididunt ut labore et dolore magna aliqua.
+        </p>
+        <blockquote><p>
+            This is a citation. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum dolore eu fugiat nulla pariatur.
+        </p></blockquote>
+        <h2>Welcome to this empty site.</h2>
+        <p>
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+            labore et dolore magna aliqua.
+        </p>
+    </div>
+{%end%}
+{%function name="yop"%}
     Hello
-</%def>
-<%def name="test">
+{%end%}
+{%function name="test"%}
     ${test_var}
-</%def>
-<%def name="test2">
+{%end%}
+{%function name="test2"%}
     <% _.each(lst, function(el) { %>
     ${el}
     <% }
     ); %>
-</%def>
-<%def name="test3">
+{%end%}
+{%function name="test3"%}
     % _.each(lst, function(el) { 
     ${el}
     % }); 
-</%def>
-<%def name="testfct">
+{%end%}
+{%function name="testfct"%}
     % var yop = function(arg) {
     ${arg}
     % }; 
     <% yop("abc"); %>
     % yop("def");
-</%def>
-<%def name="testmacro">
+{%end%}
+{%function name="testmacro"%}
     lalala
-</%def>
-<%def name="testcallmacro">
-    %{testmacro()}
-</%def>
-<%def name="testescaping">
+{%end%}
+{%function name="testcallmacro"%}
+    %{engine.testmacro()}
+{%end%}
+{%function name="testescaping"%}
     % var x = "<div></div>";
     ${x}
-</%def>
-<%def name="testnoescaping">
+{%end%}
+{%function name="testnoescaping"%}
     % var x = "<div></div>";
     %{x}
-</%def>
-<%def name="test_this">
+{%end%}
+{%function name="test_this"%}
     ${this.str}
-</%def>
-<%def name='testDef'>
-    <%def name="test">
+{%end%}
+{%function name='testDef'%}
+    {%function name="test"%}
         Test
-    </%def>
+    {%end%}
     %{test()}
-</%def>
-<%def name="testFunctional">
+{%end%}
+{%function name="testFunctional"%}
     % var x = "Test";
-    <%def name="test">
+    {%function name="test"%}
         ${ x }
-    </%def>
+    {%end%}
     %{ testFunctional2({test: test}) }
-</%def>
-<%def name="testFunctional2">
+{%end%}
+{%function name="testFunctional2"%}
     <div>
         %{ test() }
     </div>
-</%def>
+{%end%}
 ## this is a comment
-<%def name="testComment">
+{%function name="testComment"%}
     ## this is another comment
     Test
-</%def>
-<%def name="testMultiComment">
-    <%doc>This is 
-    a multi line comment</%doc>
+{%end%}
+{%function name="testMultiComment"%}
+    {*This is 
+    a multi line comment*}
     Test
-</%def>
-<%def name="multiSingleLine">
+{%end%}
+{%function name="multiSingleLine"%}
     % if (true
     %     === true) {
         Test
     % }
-</%def>
-<%def name="printtest">
+{%end%}
+{%function name="printtest"%}
     % print("Test")
-</%def>
+{%end%}
 
