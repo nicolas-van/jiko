@@ -27,7 +27,7 @@
     lalala
 </%def>
 <%def name="testcallmacro">
-    %{engine.testmacro()}
+    %{testmacro()}
 </%def>
 <%def name="testescaping">
     % var x = "<div></div>";
@@ -51,7 +51,7 @@
     <%def name="test">
         ${ x }
     </%def>
-    %{ engine.testFunctional2({test: test}) }
+    %{ testFunctional2({test: test}) }
 </%def>
 <%def name="testFunctional2">
     <div>

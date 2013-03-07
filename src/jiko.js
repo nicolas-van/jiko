@@ -244,18 +244,29 @@ function declare(_, $) {
                 removeWhitespaces: true,
             };
         },
-        loadFile: function(filename) {
+        loadFile: function(filename, namespace) {
             var self = this;
+            if (! namespace) {
+                namespace = filename.split("/");
+                namespace = namespace[namespace.length -1];
+                namespace = namespace.split(".");
+                namespace = _.filter(_.map(namespace, function(x) {return x.trim()}), function(x) {return x !== ""});
+                if (namespace.length > 1) {
+                    namespace = _.first(namespace, namespace.length - 1);
+                }
+                namespace = namespace.join("_");
+                namespace = namespace.replace(/[^a-zA-Z0-9_]/g, '_');
+            }
             if ($) {
                 return $.get(filename).pipe(function(content) {
-                    return self.loadFileContent(content);
+                    return self.loadFileContent(content, namespace);
                 });
             } else {
                 var content = fs.readFileSync(filename, "utf8");
-                return this.loadFileContent(content);
+                return this.loadFileContent(content, namespace);
             }
         },
-        loadFileContent: function(file_content) {
+        loadFileContent: function(file_content, namespace) {
             var code = this.compileFile(file_content);
 
             if (this.options.includeInDom && $) {
@@ -270,14 +281,13 @@ function declare(_, $) {
                 $(script).ready(function() {
                     def.resolve();
                 });
-                def.then(_.bind(function() {
+                return def.then(_.bind(function() {
                     var tmp = window[varname];
                     window[varname] = previous;
-                    this.includeTemplates(tmp);
+                    return this.includeTemplates(tmp, namespace);
                 }, this));
-                return def;
             } else {
-                return this.includeTemplates(new Function('context', "return (" + code + ")(context);"));
+                return this.includeTemplates(new Function('context', "return (" + code + ")(context);"), namespace);
             }
         },
         compileFile: function(file_content) {
@@ -293,14 +303,13 @@ function declare(_, $) {
                 result.source + to_append + result.footer + "}\n";
             return code;
         },
-        includeTemplates: function(fct) {
+        includeTemplates: function(fct, namespace) {
             var add = _.extend({engine: this}, this._env);
             var functions = fct(add);
-            _.each(functions, function(func, name) {
-                if (this[name])
-                    throw new Error("The template '" + name + "' is already defined");
-                this[name] = func;
-            }, this);
+            if (this[namespace])
+                throw new Error("The template '" + namespace + "' is already defined");
+            this[namespace] = functions;
+            return functions;
         },
         buildTemplate: function(text) {
             var comp = compileTemplate(text, _.extend({}, this.options));
