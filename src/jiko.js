@@ -209,7 +209,7 @@ function declare(_, $) {
                 }
                 if (b_count !== 0)
                     throw new Error("${ without a matching }");
-                source += "__p+=_.escape(" + text.slice(found.index + found[0].length, brace.index) + ");\n"
+                source += "__p+=escape_function(" + text.slice(found.index + found[0].length, brace.index) + ");\n"
                 current = brace.index + brace[0].length;
             } else { // comment 
                 tparams.comment_end.lastIndex = found.index + found[0].length;
@@ -337,7 +337,10 @@ function declare(_, $) {
             return this.buildTemplate(text)(context);
         },
         resetEnvironment: function(nenv) {
-            this._env = {_: _};
+            this._env = {
+                _: _,
+                escape_function: _.bind(_.escape, _)
+            };
             this.extendEnvironment(nenv);
         },
         extendEnvironment: function(env) {
