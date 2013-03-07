@@ -49,8 +49,8 @@ function declare(_, $) {
         return tmp.join("\n");
     };
     var tparams = {
-        def_begin: /\{%\s*function\s+(?:name=(?:(?:"(.+?)")|(?:'(.+?)')))\s*%\}/g,
-        def_end: /\{\%\s*end\s*%\}/g,
+        block: /\{%\s*(\w+)(?:\s+(?:\w+)\s*=\s*(?:(?:"(?:.+?)")|(?:'(?:.+?)')))*\s*%\}/g,
+        block_properties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/g,
         comment_multi_begin: /\{\*/g,
         comment_multi_end: /\*\}/g,
         eval_long_begin: /<%/g,
@@ -64,8 +64,7 @@ function declare(_, $) {
     };
     var allbegin = new RegExp(
         "((?:\\\\)*)(" +
-        "(" + tparams.def_begin.source + ")|" +
-        "(" + tparams.def_end.source + ")|" +
+        "(" + tparams.block.source + ")|" +
         "(" + tparams.comment_multi_begin.source + ")|" +
         "(" + tparams.eval_long_begin.source + ")|" +
         "(" + tparams.interpolate_begin.source + ")|" +
@@ -78,16 +77,14 @@ function declare(_, $) {
     var regexes = {
         slashes: 1,
         match: 2,
-        def_begin: 3,
-        def_name1: 4,
-        def_name2: 5,
-        def_end: 6,
-        comment_multi_begin: 7,
-        eval_long: 8,
-        interpolate: 9,
-        eval_short: 10,
-        escape: 11,
-        comment: 12
+        block: 3,
+        block_type: 4,
+        comment_multi_begin: 5,
+        eval_long: 6,
+        interpolate: 7,
+        eval_short: 8,
+        escape: 9,
+        comment: 10
     };
     var regex_count = 4;
 
@@ -130,22 +127,36 @@ function declare(_, $) {
                 continue;
             }
 
-            if (found[regexes.def_begin]) {
-                var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length}));
-                var name = (found[regexes.def_name1] || found[regexes.def_name2]);
-                source += "var " + name  + " = function(context) {\n" + indent(sub_compile.header + sub_compile.source
-                    + sub_compile.footer) + "}\n";
-                functions.push(name);
-                current = sub_compile.end;
-            } else if (found[regexes.def_end]) {
-                text_end = found.index;
-                restart = found.index + found[0].length;
-                break;
+            if (found[regexes.block]) {
+                var block_type = found[regexes.block_type];
+                var block_complete = found[regexes.block];
+                var block_args = {};
+                var block_parse;
+                while (block_parse = tparams.block_properties.exec(block_complete)) {
+                    block_args[block_parse[1]] = _.unescape(block_parse[2].slice(1, block_parse[2].length - 1));
+                }
+                if (block_type === "function") {
+                    var name = block_args["name"];
+                    if (! name || ! name.match(/^\w+$/)) {
+                        throw new Error("Function with invalid name");
+                    }
+                    var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length}));
+                    source += "var " + name  + " = function(context) {\n" + indent(sub_compile.header + sub_compile.source
+                        + sub_compile.footer) + "}\n";
+                    functions.push(name);
+                    current = sub_compile.end;
+                } else if (block_type === "end") {
+                    text_end = found.index;
+                    restart = found.index + found[0].length;
+                    break;
+                } else {
+                    throw new Error("Unknown block type: '" + block_type + "'");
+                }
             } else if (found[regexes.comment_multi_begin]) {
                 tparams.comment_multi_end.lastIndex = found.index + found[0].length;
                 var end = tparams.comment_multi_end.exec(text);
                 if (!end)
-                    throw new Error("<%doc> without corresponding </%doc>");
+                    throw new Error("{* without corresponding *}");
                 current = end.index + end[0].length;
             } else if (found[regexes.eval_long]) {
                 tparams.eval_long_end.lastIndex = found.index + found[0].length;
