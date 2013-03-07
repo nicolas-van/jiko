@@ -231,6 +231,19 @@ function declare(_, $) {
         var fs = require("fs");
     }
 
+    jiko.namespaceFromFileName = function(filename) {
+        var namespace = filename.split("/");
+        namespace = namespace[namespace.length -1];
+        namespace = namespace.split(".");
+        namespace = _.filter(_.map(namespace, function(x) {return x.trim()}), function(x) {return x !== ""});
+        if (namespace.length > 1) {
+            namespace = _.first(namespace, namespace.length - 1);
+        }
+        namespace = namespace.join("_");
+        namespace = namespace.replace(/[^a-zA-Z0-9_]/g, '_');
+        return namespace;
+    };
+
     jiko.TemplateEngine = function() {
         this.__init__();
     };
@@ -246,17 +259,7 @@ function declare(_, $) {
         },
         loadFile: function(filename, namespace) {
             var self = this;
-            if (! namespace) {
-                namespace = filename.split("/");
-                namespace = namespace[namespace.length -1];
-                namespace = namespace.split(".");
-                namespace = _.filter(_.map(namespace, function(x) {return x.trim()}), function(x) {return x !== ""});
-                if (namespace.length > 1) {
-                    namespace = _.first(namespace, namespace.length - 1);
-                }
-                namespace = namespace.join("_");
-                namespace = namespace.replace(/[^a-zA-Z0-9_]/g, '_');
-            }
+            namespace = namespace || jiko.namespaceFromFileName(filename);
             if ($) {
                 return $.get(filename).pipe(function(content) {
                     return self.loadFileContent(content, namespace);
@@ -317,7 +320,7 @@ function declare(_, $) {
             var add = _.extend({engine: this}, this._env);
             var func = new Function('context', result);
             return function(data) {
-                return func.call(this, _.extend(add, data));
+                return func.call(this, _.extend({}, add, data));
             };
         },
         eval: function(text, context) {
