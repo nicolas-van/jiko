@@ -227,6 +227,10 @@ function declare(_, $) {
         };
     };
 
+    if (! $) {
+        var fs = require("fs");
+    }
+
     jiko.TemplateEngine = function() {
         this.__init__();
     };
@@ -242,14 +246,19 @@ function declare(_, $) {
         },
         loadFile: function(filename) {
             var self = this;
-            return $.get(filename).pipe(function(content) {
-                return self.loadFileContent(content);
-            });
+            if ($) {
+                return $.get(filename).pipe(function(content) {
+                    return self.loadFileContent(content);
+                });
+            } else {
+                var content = fs.readFileSync(filename, "utf8");
+                return this.loadFileContent(content);
+            }
         },
         loadFileContent: function(file_content) {
             var code = this.compileFile(file_content);
 
-            if (this.options.includeInDom) {
+            if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("novajstemplate");
                 var previous = window[varname];
                 code = "window." + varname + " = " + code + ";";
@@ -268,7 +277,6 @@ function declare(_, $) {
                 }, this));
                 return def;
             } else {
-                console.log("return (" + code + ")(context);");
                 return this.includeTemplates(new Function('context', "return (" + code + ")(context);"));
             }
         },

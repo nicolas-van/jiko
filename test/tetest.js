@@ -1,7 +1,7 @@
 
-
 if (typeof(exports) !== "undefined") { // nodejs
     _ = require("underscore");
+    $ = require('jquery-deferred');
 }
 
 var e = new jiko.TemplateEngine();
@@ -11,10 +11,10 @@ var transform = function(x) {
         function(el) { return el; }).join(" ");
 };
 
-/*
-e.loadFile("templates.html").pipe(function() {
-*/
-/*
+var load_def = e.loadFile("templates.html");
+
+$.when(load_def).pipe(function() {
+
 test("base", function() {
     var r = e.yop();
     equal(r.trim(), "Hello");
@@ -46,7 +46,6 @@ test("this", function() {
     var r = e.test_this.call(obj);
     equal(r.trim(), obj.str);
 });
-*/
 
 test("slash_escape", function() {
     var tmpl = e.buildTemplate("\\${1+1}");
@@ -64,7 +63,7 @@ test("slash_escape", function() {
     var tmpl = e.buildTemplate("\\\\${1+1}\n${1+1}");
     equal(tmpl(), "\\2\n2");
 });
-/*
+
 test("def", function() {
     var r = e.testDef();
     equal(r.trim(), "Test");
@@ -120,9 +119,5 @@ test("doesNotAddSpaces", function() {
     equal(r, "BarFoo");
 });
 
-*/
-
-/*
 
 });
-*/
