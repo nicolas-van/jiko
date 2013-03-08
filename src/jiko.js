@@ -241,7 +241,8 @@ function declare(_, $) {
         var fs = require("fs");
     }
 
-    jiko.namespaceFromFileName = function(filename) {
+    // unused for now
+    var namespaceFromFileName = function(filename) {
         var namespace = filename.split("/");
         namespace = namespace[namespace.length -1];
         namespace = namespace.split(".");
@@ -267,20 +268,24 @@ function declare(_, $) {
                 removeWhitespaces: true,
             };
         },
-        loadFile: function(filename, namespace) {
+        loadFile: function(filename) {
             var self = this;
-            namespace = namespace || jiko.namespaceFromFileName(filename);
             if ($) {
                 return $.get(filename).pipe(function(content) {
-                    return self.loadFileContent(content, namespace);
+                    return self.loadFileContent(content);
                 });
             } else {
                 var content = fs.readFileSync(filename, "utf8");
-                return this.loadFileContent(content, namespace);
+                return this.loadFileContent(content);
             }
         },
-        loadFileContent: function(file_content, namespace) {
+        loadFileContent: function(file_content) {
             var code = this.compileFile(file_content);
+
+            var addEnv = _.bind(function(fct) {
+                var add = _.extend({}, this._env);
+                return fct(add);
+            }, this);
 
             if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("novajstemplate");
@@ -297,10 +302,11 @@ function declare(_, $) {
                 return def.then(_.bind(function() {
                     var tmp = window[varname];
                     window[varname] = previous;
-                    return this.includeTemplates(tmp, namespace);
+                    return addEnv(tmp);
                 }, this));
             } else {
-                return this.includeTemplates(new Function('context', "return (" + code + ")(context);"), namespace);
+
+                return addEnv(new Function('context', "return (" + code + ")(context);"));
             }
         },
         compileFile: function(file_content) {
@@ -316,18 +322,10 @@ function declare(_, $) {
                 result.source + to_append + result.footer + "}\n";
             return code;
         },
-        includeTemplates: function(fct, namespace) {
-            var add = _.extend({engine: this}, this._env);
-            var functions = fct(add);
-            if (this[namespace])
-                throw new Error("The template '" + namespace + "' is already defined");
-            this[namespace] = functions;
-            return functions;
-        },
         buildTemplate: function(text) {
             var comp = compileTemplate(text, _.extend({}, this.options));
             var result = comp.header + comp.source + comp.footer;
-            var add = _.extend({engine: this}, this._env);
+            var add = _.extend({}, this._env);
             var func = new Function('context', result);
             return function(data) {
                 return func.call(this, _.extend({}, add, data));
