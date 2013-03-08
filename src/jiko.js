@@ -28,7 +28,7 @@ if (typeof(exports) !== "undefined") { // nodejs
     underscore.extend(exports, declare(underscore, null));
 } else if (typeof(define) !== "undefined") { // amd
     define(["underscore", "jquery"], declare);
-} else { // define global variable 'nova'
+} else { // define global variable
     jiko = declare(_, $);
 }
 
@@ -36,9 +36,6 @@ if (typeof(exports) !== "undefined") { // nodejs
 function declare(_, $) {
     var jiko = {};
 
-    /*
-        Nova Template Engine
-    */
     var escape_ = function(text) {
         return JSON.stringify(text);
     }
@@ -288,7 +285,7 @@ function declare(_, $) {
             }, this);
 
             if (this.options.includeInDom && $) {
-                var varname = _.uniqueId("novajstemplate");
+                var varname = _.uniqueId("jikotemplate");
                 var previous = window[varname];
                 code = "window." + varname + " = " + code + ";";
                 var def = $.Deferred();
