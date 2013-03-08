@@ -1,4 +1,6 @@
 /*
+Jiko version 0.7
+
 Copyright (c) 2013, Nicolas Vanhoren
 
 Released under the MIT license
