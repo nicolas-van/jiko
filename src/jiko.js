@@ -104,7 +104,7 @@ function declare(_, $) {
     var regex_count = 4;
 
     var printDirectives = "var __p = '';\n" +
-        "var print = function() { __p+=Array.prototype.join.call(arguments, '') };\n";
+        "var print = function(t) { __p+=t; };\n";
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
         "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
