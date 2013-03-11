@@ -4,10 +4,14 @@ if (typeof(exports) !== "undefined") { // nodejs
     $ = require('jquery-deferred');
 }
 
+var trim = function(t) {
+    return t.replace(/^\s+|\s+$/g, ''); 
+};
+
 var te = new jiko.TemplateEngine();
 
 var transform = function(x) {
-    return _.filter(_.map(x.split(/\s+/), function(el) { return el.trim(); }),
+    return _.filter(_.map(x.split(/\s+/), function(el) { return trim(el); }),
         function(el) { return el; }).join(" ");
 };
 
@@ -17,9 +21,9 @@ $.when(load_def).pipe(function(templates) {
 
 test("base", function() {
     var r = templates.yop();
-    equal(r.trim(), "Hello");
+    equal(trim(r), "Hello");
     r = templates.test({test_var: "azerty"});
-    equal(r.trim(), "azerty");
+    equal(trim(r), "azerty");
     r = templates.test2({lst: [1, 2, 3]});
     r = transform(r);
     equal(r, "1 2 3"); 
@@ -33,18 +37,18 @@ test("base", function() {
 
 test("escaping", function() {
     var r = templates.testescaping();
-    equal(r.trim(), "&lt;div&gt;&lt;&#x2F;div&gt;");
+    equal(trim(r), "&lt;div&gt;&lt;&#x2F;div&gt;");
 });
 
 test("noescaping", function() {
     var r = templates.testnoescaping();
-    equal(r.trim(), "<div></div>");
+    equal(trim(r), "<div></div>");
 });
 
 test("this", function() {
     var obj = {str: "test"};
     var r = templates.test_this.call(obj);
-    equal(r.trim(), obj.str);
+    equal(trim(r), obj.str);
 });
 
 test("slash_escape", function() {
@@ -66,7 +70,7 @@ test("slash_escape", function() {
 
 test("def", function() {
     var r = templates.testDef();
-    equal(r.trim(), "Test");
+    equal(trim(r), "Test");
 });
 
 test("functional_prog", function() {

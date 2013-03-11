@@ -250,7 +250,7 @@ function declare(_, $) {
             source: source,
             footer: footer,
             end: restart,
-            functions: functions,
+            functions: functions
         };
     };
 
@@ -281,7 +281,7 @@ function declare(_, $) {
             this.options = {
                 includeInDom: $ ? true : false,
                 indent: true,
-                removeWhitespaces: true,
+                removeWhitespaces: true
             };
         },
         loadFile: function(filename) {
@@ -311,22 +311,28 @@ function declare(_, $) {
                     def.resolve();
                 });
                 var script_result;
-                def = def.then(_.bind(function() {
+                var loaded = false;
+                def.then(_.bind(function() {
+                    loaded = true;
                     script_result = window[varname];
                     window[varname] = previous;
                 }, this));
                 // we want this method to behave synchronously, if the browser
                 // does not seem to support synchronous inclusion of scripts, we
                 // use new Function() method of script loading instead
-                if (script_result) {
-                    console.log("Loaded Jiko template.");
-                    return script_result;
+                if (loaded) {
+                    if (script_result) {
+                        return script_result;
+                    } else {
+                        throw new Exception("Error during execution of a Jiko template's code");
+                    }
                 } else {
-                    console.log("Could not include compiled Jiko in DOM, fallbacking on new Function().");
+                    if (typeof(console) !== "undefined")
+                        console.log("Could not include compiled Jiko in DOM, fallbacking on new Function().");
                 }
             }
 
-            return (new Function('context', "return (" + code + ")(context);"))();
+            return (new Function("return (" + code + ")();"))();
         },
         compileFile: function(file_content) {
             var result = compileTemplate(file_content, _.extend({}, this.options, {fileMode: true}));
@@ -349,7 +355,7 @@ function declare(_, $) {
         },
         eval: function(text, context) {
             return this.buildTemplate(text)(context);
-        },
+        }
     });
 
     return jiko;
