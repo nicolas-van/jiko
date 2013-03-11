@@ -332,7 +332,7 @@ function declare(_, $) {
                 }, this));
                 // we want this method to behave synchronously, if the browser
                 // does not seem to support synchronous inclusion of scripts, we
-                // use new Function() method of script loading instead
+                // use new Function() instead
                 if (loaded) {
                     if (script_result) {
                         return script_result;
