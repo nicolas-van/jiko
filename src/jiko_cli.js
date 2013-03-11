@@ -1,4 +1,4 @@
-
+#! /usr/bin/env node
 
 var _ = require('underscore');
 var jiko = require('./jiko');
