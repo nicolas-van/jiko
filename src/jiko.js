@@ -267,20 +267,6 @@ function declare(_, $) {
         };
     };
 
-    // unused for now
-    var namespaceFromFileName = function(filename) {
-        var namespace = filename.split("/");
-        namespace = namespace[namespace.length -1];
-        namespace = namespace.split(".");
-        namespace = _.filter(_.map(namespace, function(x) {return _trim(x)}), function(x) {return x !== ""});
-        if (namespace.length > 1) {
-            namespace = _.first(namespace, namespace.length - 1);
-        }
-        namespace = namespace.join("_");
-        namespace = namespace.replace(/[^a-zA-Z0-9_]/g, '_');
-        return namespace;
-    };
-
     jiko.TemplateEngine = function() {
         this.__init__();
     };
