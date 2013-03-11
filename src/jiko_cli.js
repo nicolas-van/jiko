@@ -3,6 +3,7 @@
 var _ = require('underscore');
 var jiko = require('./jiko');
 var fs = require("fs");
+var path = require("path");
 
 
 var program = require('commander');
@@ -38,12 +39,6 @@ compile.description('Compile a Jiko template file to a javascript file.')
             removeWhitespaces: ! compile.whitespaces,
         });
         var compiled = te.compileFile(content);
-        var indent_ = te.options.indent ? function(txt) {
-            var tmp = _.map(txt.split("\n"), function(x) { return "    " + x; });
-            tmp.pop();
-            tmp.push("");
-            return tmp.join("\n");
-        } : function() {};
         compiled = "(function() {\n" +
             "var declare = " + compiled + ";\n" +
             "if (typeof(define) !== 'undefined') {\n" +
@@ -54,7 +49,12 @@ compile.description('Compile a Jiko template file to a javascript file.')
             "    " + namespace + " = declare();\n" +
             "}\n" +
             "})();";
-        console.log(compiled);
+        if (compile.output) {
+            console.log(compiled);
+        } else {
+            var n_name = path.join(path.dirname(filename), namespace + ".js");
+            fs.writeFileSync(n_name, compiled, "utf8");
+        }
     });
 
 program.parse(process.argv);
