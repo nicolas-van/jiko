@@ -87,8 +87,14 @@ function declare(_, $) {
     };
     var regex_count = 4;
 
+    var printDirectives = "var __p = '';\n" +
+        "var print = function() { __p+=Array.prototype.join.call(arguments, '') };\n";
+
+    var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
+        "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
+
     var compileTemplate = function(text, options) {
-        options = _.extend({start: 0, indent: true, no_esc: false}, options);
+        options = _.extend({start: 0, indent: true, noEsc: false, fileMode: false}, options);
         start = options.start;
         var source = "";
         var current = start;
@@ -109,18 +115,21 @@ function declare(_, $) {
                 tmp += txt[txt.length - 1];
             return tmp;
         } : function(x) { return x };
+        var appendPrint = ! options.fileMode ? function(t) {
+            source += t ? "__p+=" + t + ";\n" : '';
+        }: function() {};
         while (found = allbegin.exec(text)) {
             var to_add = rmWhite(text.slice(current, found.index));
-            source += to_add ? "__p+=" + escape_(to_add) + ";\n" : '';
+            appendPrint(to_add ? escape_(to_add) : null);
             current = found.index;
 
             // slash escaping handling
             var slashes = found[regexes.slashes] || "";
             var nbr = slashes.length;
             var nslash = slashes.slice(0, Math.floor(nbr / 2));
-            source += nbr !== 0 ? "__p+=" + escape_(nslash) + ";\n" : "";
+            appendPrint(nbr !== 0 ? escape_(nslash) : null);
             if (nbr % 2 !== 0) {
-                source += "__p+=" + escape_(found[regexes.match]) + ";\n";
+                appendPrint(escape_(found[regexes.match]));
                 current = found.index + found[0].length;
                 allbegin.lastIndex = current;
                 continue;
@@ -139,7 +148,7 @@ function declare(_, $) {
                     if (! name || ! name.match(/^\w+$/)) {
                         throw new Error("Function with invalid name");
                     }
-                    var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, no_esc: true}));
+                    var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
                     source += "var " + name  + " = function(context) {\n" + indent(sub_compile.header + sub_compile.source
                         + sub_compile.footer) + "}\n";
                     functions.push(name);
@@ -183,7 +192,7 @@ function declare(_, $) {
                 }
                 if (b_count !== 0)
                     throw new Error("%{ without a matching }");
-                source += "__p+=" + text.slice(found.index + found[0].length, brace.index) + ";\n"
+                appendPrint(text.slice(found.index + found[0].length, brace.index));
                 current = brace.index + brace[0].length;
             } else if (found[regexes.eval_short]) {
                 tparams.eval_short_end.lastIndex = found.index + found[0].length;
@@ -208,7 +217,7 @@ function declare(_, $) {
                 }
                 if (b_count !== 0)
                     throw new Error("${ without a matching }");
-                source += "__p+=escape_function(" + text.slice(found.index + found[0].length, brace.index) + ");\n"
+                appendPrint("escape_function(" + text.slice(found.index + found[0].length, brace.index) + ")");
                 current = brace.index + brace[0].length;
             } else { // comment 
                 tparams.comment_end.lastIndex = found.index + found[0].length;
@@ -220,15 +229,18 @@ function declare(_, $) {
             allbegin.lastIndex = current;
         }
         var to_add = rmWhite(text.slice(current, text_end));
-        source += to_add ? "__p+=" + escape_(to_add) + ";\n" : "";
+        appendPrint(to_add ? escape_(to_add) : null);
 
-        var header = "var __p = '';\n" +
-            "var print = function() { __p+=Array.prototype.join.call(arguments, '') };\n" +
-            (options.no_esc ? '' : "var __matches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-            "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __matches[a]})};\n") +
-            "with (context || {}) {\n";
-        var footer = "}\nreturn __p;\n";
-        source = indent(source);
+        if (options.fileMode) {
+            var header = escapeDirectives;
+            var footer = '';
+        } else {
+            var header = printDirectives +
+                (options.noEsc ? '' : escapeDirectives) +
+                "with (context || {}) {\n";
+            var footer = "}\nreturn __p;\n";
+            source = indent(source);
+        }
 
         return {
             header: header,
@@ -306,16 +318,16 @@ function declare(_, $) {
             }
         },
         compileFile: function(file_content) {
-            var result = compileTemplate(file_content, _.extend({}, this.options));
+            var result = compileTemplate(file_content, _.extend({}, this.options, {fileMode: true}));
             var to_append = "";
             _.each(result.functions, function(name) {
                 to_append += name + ": " + name + ",\n";
             }, this);
             to_append = this.options.indent ? indent_(to_append) : to_append;
             to_append = "return {\n" + to_append + "};\n";
-            to_append = this.options.indent ? indent_(to_append) : to_append;
-            var code = "function(context) {\n" + result.header +
-                result.source + to_append + result.footer + "}\n";
+            var code = result.header + result.source + to_append + result.footer;
+            code = this.options.indent ? indent_(code) : code;
+            code = "function() {\n" + code + "}";
             return code;
         },
         buildTemplate: function(text) {
