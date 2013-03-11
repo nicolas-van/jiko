@@ -1,0 +1,20 @@
+{
+    "name": "jiko",
+    "version": "0.7.0",
+    "description": "Jiko Template Engine",
+    "main": "jiko.js",
+    "author": "Nicolas Vanhoren",
+    "keywords": ["jiko", "template", "engine"],
+    "repository" : {
+        "type": "git",
+        "url": "git://github.com/nicolas-van/jiko.git"
+    },
+    "dependencies": {
+        "underscore": ">=1.4.4",
+        "commander": ">=1.1.1",
+    },
+    "engines": { "node": "*" },
+    "bin" : {
+        "jiko" : "jiko_cli.js"
+    }
+}
