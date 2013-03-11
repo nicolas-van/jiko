@@ -38,8 +38,21 @@ if (typeof(exports) !== "undefined") { // nodejs
 function declare(_, $) {
     var jiko = {};
 
+    var escapes = {
+        '\\': '\\',
+        "'": "'",
+        'r': '\r',
+        'n': '\n',
+        't': '\t',
+        'u2028': '\u2028',
+        'u2029': '\u2029'
+    };
+    for (var p in escapes) escapes[escapes[p]] = p;
+    var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
     var escape_ = function(text) {
-        return JSON.stringify(text);
+        return "'" + text.replace(escaper, function(match) {
+            return '\\' + escapes[match];
+        }) + "'";
     }
     var indent_ = function(txt) {
         var tmp = _.map(txt.split("\n"), function(x) { return "    " + x; });
@@ -112,10 +125,10 @@ function declare(_, $) {
                 return txt;
             var tmp = _.chain(txt.split("\n")).map(function(x) { return _trim(x) })
                 .reject(function(x) { return !x }).value().join("\n");
-            if (txt.length >= 1 && txt[0].match(/\s/))
-                tmp = txt[0] + tmp;
-            if (txt.length >= 2 && txt[txt.length - 1].match(/\s/))
-                tmp += txt[txt.length - 1];
+            if (txt.length >= 1 && txt.charAt(0).match(/\s/))
+                tmp = txt.charAt(0) + tmp;
+            if (txt.length >= 2 && txt.charAt(txt.length - 1).match(/\s/))
+                tmp += txt.charAt(txt.length - 1);
             return tmp;
         } : function(x) { return x };
         var appendPrint = ! options.fileMode ? function(t) {
@@ -324,7 +337,7 @@ function declare(_, $) {
                     if (script_result) {
                         return script_result;
                     } else {
-                        throw new Exception("Error during execution of a Jiko template's code");
+                        throw new Error("Error during execution of a Jiko template's code");
                     }
                 } else {
                     if (typeof(console) !== "undefined")
@@ -337,8 +350,13 @@ function declare(_, $) {
         compileFile: function(file_content) {
             var result = compileTemplate(file_content, _.extend({}, this.options, {fileMode: true}));
             var to_append = "";
-            _.each(result.functions, function(name) {
-                to_append += name + ": " + name + ",\n";
+            var last = result.functions.length - 1;
+            _.each(_.range(result.functions.length), function(i) {
+                var name = result.functions[i];
+                to_append += name + ": " + name;
+                if (i !== last)
+                    to_append += ",";
+                to_append += "\n";
             }, this);
             to_append = this.options.indent ? indent_(to_append) : to_append;
             to_append = "return {\n" + to_append + "};\n";
