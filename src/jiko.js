@@ -267,10 +267,6 @@ function declare(_, $) {
         };
     };
 
-    if (! $) {
-        var fs = require("fs");
-    }
-
     // unused for now
     var namespaceFromFileName = function(filename) {
         var namespace = filename.split("/");
@@ -304,6 +300,7 @@ function declare(_, $) {
                     return self.loadFileContent(content);
                 });
             } else {
+                var fs = require("fs");
                 var content = fs.readFileSync(filename, "utf8");
                 return this.loadFileContent(content);
             }
