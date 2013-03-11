@@ -47,6 +47,9 @@ function declare(_, $) {
         tmp.push("");
         return tmp.join("\n");
     };
+    var _trim = function(t) {
+        return t.replace(/^\s+|\s+$/g, ''); 
+    };
     var tparams = {
         block: /\{%\s*(\w+)(?:\s+(?:\w+)\s*=\s*(?:(?:"(?:.+?)")|(?:'(?:.+?)')))*\s*%\}/g,
         block_properties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/g,
@@ -107,7 +110,7 @@ function declare(_, $) {
         var rmWhite = options.removeWhitespaces ? function(txt) {
             if (! txt)
                 return txt;
-            var tmp = _.chain(txt.split("\n")).map(function(x) { return x.trim() })
+            var tmp = _.chain(txt.split("\n")).map(function(x) { return _trim(x) })
                 .reject(function(x) { return !x }).value().join("\n");
             if (txt.length >= 1 && txt[0].match(/\s/))
                 tmp = txt[0] + tmp;
@@ -172,7 +175,7 @@ function declare(_, $) {
                 if (!end)
                     throw new Error("<% without matching %>");
                 var code = text.slice(found.index + found[0].length, end.index);
-                code = _(code.split("\n")).chain().map(function(x) { return x.trim() })
+                code = _(code.split("\n")).chain().map(function(x) { return _trim(x) })
                     .reject(function(x) { return !x }).value().join("\n");
                 source += code + "\n";
                 current = end.index + end[0].length;
@@ -199,7 +202,7 @@ function declare(_, $) {
                 var end = tparams.eval_short_end.exec(text);
                 if (!end)
                     throw new Error("impossible state!!");
-                source += text.slice(found.index + found[0].length, end.index).trim() + "\n";
+                source += _trim(text.slice(found.index + found[0].length, end.index)) + "\n";
                 current = end.index;
             } else if (found[regexes.escape]) {
                 var braces = /{|}/g;
@@ -260,7 +263,7 @@ function declare(_, $) {
         var namespace = filename.split("/");
         namespace = namespace[namespace.length -1];
         namespace = namespace.split(".");
-        namespace = _.filter(_.map(namespace, function(x) {return x.trim()}), function(x) {return x !== ""});
+        namespace = _.filter(_.map(namespace, function(x) {return _trim(x)}), function(x) {return x !== ""});
         if (namespace.length > 1) {
             namespace = _.first(namespace, namespace.length - 1);
         }
@@ -298,7 +301,7 @@ function declare(_, $) {
             if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("jikotemplate");
                 var previous = window[varname];
-                code = "window." + varname + " = " + code + ";";
+                code = "window." + varname + " = (" + code + ")();";
                 var def = $.Deferred();
                 var script   = document.createElement("script");
                 script.type  = "text/javascript";
@@ -307,15 +310,23 @@ function declare(_, $) {
                 $(script).ready(function() {
                     def.resolve();
                 });
-                return def.then(_.bind(function() {
-                    var tmp = window[varname];
+                var script_result;
+                def = def.then(_.bind(function() {
+                    script_result = window[varname];
                     window[varname] = previous;
-                    return tmp();
                 }, this));
-            } else {
-
-                return (new Function('context', "return (" + code + ")(context);"))();
+                // we want this method to behave synchronously, if the browser
+                // does not seem to support synchronous inclusion of scripts, we
+                // use new Function() method of script loading instead
+                if (script_result) {
+                    console.log("Loaded Jiko template.");
+                    return script_result;
+                } else {
+                    console.log("Could not include compiled Jiko in DOM, fallbacking on new Function().");
+                }
             }
+
+            return (new Function('context', "return (" + code + ")(context);"))();
         },
         compileFile: function(file_content) {
             var result = compileTemplate(file_content, _.extend({}, this.options, {fileMode: true}));
