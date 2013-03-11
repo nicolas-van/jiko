@@ -88,7 +88,7 @@ function declare(_, $) {
     var regex_count = 4;
 
     var compileTemplate = function(text, options) {
-        options = _.extend({start: 0, indent: true}, options);
+        options = _.extend({start: 0, indent: true, no_esc: false}, options);
         start = options.start;
         var source = "";
         var current = start;
@@ -139,7 +139,7 @@ function declare(_, $) {
                     if (! name || ! name.match(/^\w+$/)) {
                         throw new Error("Function with invalid name");
                     }
-                    var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length}));
+                    var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, no_esc: true}));
                     source += "var " + name  + " = function(context) {\n" + indent(sub_compile.header + sub_compile.source
                         + sub_compile.footer) + "}\n";
                     functions.push(name);
@@ -222,8 +222,11 @@ function declare(_, $) {
         var to_add = rmWhite(text.slice(current, text_end));
         source += to_add ? "__p+=" + escape_(to_add) + ";\n" : "";
 
-        var header = "var __p = ''; var print = function() { __p+=Array.prototype.join.call(arguments, '') };\n" +
-          "with (context || {}) {\n";
+        var header = "var __p = '';\n" +
+            "var print = function() { __p+=Array.prototype.join.call(arguments, '') };\n" +
+            (options.no_esc ? '' : "var __matches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
+            "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __matches[a]})};\n") +
+            "with (context || {}) {\n";
         var footer = "}\nreturn __p;\n";
         source = indent(source);
 
@@ -260,7 +263,6 @@ function declare(_, $) {
 
     _.extend(jiko.TemplateEngine.prototype, {
         __init__: function() {
-            this.resetEnvironment();
             this.options = {
                 includeInDom: $ ? true : false,
                 indent: true,
@@ -281,11 +283,6 @@ function declare(_, $) {
         loadFileContent: function(file_content) {
             var code = this.compileFile(file_content);
 
-            var addEnv = _.bind(function(fct) {
-                var add = _.extend({}, this._env);
-                return fct(add);
-            }, this);
-
             if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("jikotemplate");
                 var previous = window[varname];
@@ -301,11 +298,11 @@ function declare(_, $) {
                 return def.then(_.bind(function() {
                     var tmp = window[varname];
                     window[varname] = previous;
-                    return addEnv(tmp);
+                    return tmp();
                 }, this));
             } else {
 
-                return addEnv(new Function('context', "return (" + code + ")(context);"));
+                return (new Function('context', "return (" + code + ")(context);"))();
             }
         },
         compileFile: function(file_content) {
@@ -324,24 +321,11 @@ function declare(_, $) {
         buildTemplate: function(text) {
             var comp = compileTemplate(text, _.extend({}, this.options));
             var result = comp.header + comp.source + comp.footer;
-            var add = _.extend({}, this._env);
             var func = new Function('context', result);
-            return function(data) {
-                return func.call(this, _.extend({}, add, data));
-            };
+            return func;
         },
         eval: function(text, context) {
             return this.buildTemplate(text)(context);
-        },
-        resetEnvironment: function(nenv) {
-            this._env = {
-                _: _,
-                escape_function: _.bind(_.escape, _)
-            };
-            this.extendEnvironment(nenv);
-        },
-        extendEnvironment: function(env) {
-            _.extend(this._env, env || {});
         },
     });
 
