@@ -110,7 +110,7 @@ function declare(_, $) {
         "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
 
     var compileTemplate = function(text, options) {
-        options = _.extend({start: 0, indent: true, noEsc: false, fileMode: false}, options);
+        options = _.extend({start: 0, noEsc: false, fileMode: false}, options);
         start = options.start;
         var source = "";
         var current = start;
@@ -119,7 +119,6 @@ function declare(_, $) {
         var restart = end;
         var found;
         var functions = [];
-        var indent = options.indent ? indent_ : function (txt) { return txt; };
         var rmWhite = options.removeWhitespaces ? function(txt) {
             if (! txt)
                 return txt;
@@ -165,7 +164,7 @@ function declare(_, $) {
                         throw new Error("Function with invalid name");
                     }
                     var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
-                    source += "var " + name  + " = function(context) {\n" + indent(sub_compile.header + sub_compile.source
+                    source += "var " + name  + " = function(context) {\n" + indent_(sub_compile.header + sub_compile.source
                         + sub_compile.footer) + "}\n";
                     functions.push(name);
                     current = sub_compile.end;
@@ -255,7 +254,7 @@ function declare(_, $) {
                 (options.noEsc ? '' : escapeDirectives) +
                 "with (context || {}) {\n";
             var footer = "}\nreturn __p;\n";
-            source = indent(source);
+            source = indent_(source);
         }
 
         return {
@@ -275,7 +274,6 @@ function declare(_, $) {
         __init__: function() {
             this.options = {
                 includeInDom: $ ? true : false,
-                indent: true,
                 removeWhitespaces: true
             };
         },
@@ -341,10 +339,10 @@ function declare(_, $) {
                     to_append += ",";
                 to_append += "\n";
             }, this);
-            to_append = this.options.indent ? indent_(to_append) : to_append;
+            to_append = indent_(to_append);
             to_append = "return {\n" + to_append + "};\n";
             var code = result.header + result.source + to_append + result.footer;
-            code = this.options.indent ? indent_(code) : code;
+            code = indent_(code);
             code = "function() {\n" + code + "}";
             return code;
         },
