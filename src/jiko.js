@@ -273,8 +273,7 @@ function declare(_, $) {
     _.extend(jiko.TemplateEngine.prototype, {
         __init__: function() {
             this.options = {
-                includeInDom: $ ? true : false,
-                removeWhitespaces: true
+                includeInDom: $ ? true : false
             };
         },
         loadFile: function(filename) {
@@ -329,7 +328,7 @@ function declare(_, $) {
             return (new Function("return (" + code + ")();"))();
         },
         compileFile: function(file_content) {
-            var result = compileTemplate(file_content, _.extend({}, this.options, {fileMode: true}));
+            var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
             var to_append = "";
             var last = result.functions.length - 1;
             _.each(_.range(result.functions.length), function(i) {
