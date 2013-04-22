@@ -109,7 +109,8 @@ function declare(_, is_node) {
         "var print = function(t) { __p += t; };\n";
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-        "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
+        "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n" +
+        "var exports = {};\n";
 
     var compileTemplate = function(text, options) {
         options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
@@ -120,7 +121,6 @@ function declare(_, is_node) {
         var text_end = text.length;
         var restart = end;
         var found;
-        var functions = [];
         var rmWhite = options.removeWhitespaces ? function(txt) {
             if (! txt)
                 return txt;
@@ -180,8 +180,10 @@ function declare(_, is_node) {
                     }
                     var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
                     source += "var " + name  + " = function(context) {\n" + indent_(sub_compile.header + sub_compile.source
-                        + sub_compile.footer) + "}\n";
-                    functions.push(name);
+                        + sub_compile.footer) + "};\n";
+                    if (options.fileMode) {
+                        source += "exports." + name + " = " + name + ";\n";
+                    }
                     current = sub_compile.end;
                 } else if (block_type === "end") {
                     text_end = found.index;
@@ -276,8 +278,7 @@ function declare(_, is_node) {
             header: header,
             source: source,
             footer: footer,
-            end: restart,
-            functions: functions
+            end: restart
         };
     };
 
@@ -306,17 +307,7 @@ function declare(_, is_node) {
 
     jiko.compileFile = function(file_content) {
         var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
-        var to_append = "";
-        var last = result.functions.length - 1;
-        _.each(_.range(result.functions.length), function(i) {
-            var name = result.functions[i];
-            to_append += name + ": " + name;
-            if (i !== last)
-                to_append += ",";
-            to_append += "\n";
-        });
-        to_append = indent_(to_append);
-        to_append = "return {\n" + to_append + "};\n";
+        to_append = "return exports;\n";
         var code = result.header + result.source + to_append + result.footer;
         code = indent_(code);
         code = "function() {\n" + code + "}";
