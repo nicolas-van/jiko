@@ -222,7 +222,7 @@ function declare(_, is_node) {
                 }
                 if (b_count !== 0)
                     throw new Error("%{ without a matching }");
-                appendPrint(text.slice(found.index + found[0].length, brace.index));
+                appendPrint(_trim(text.slice(found.index + found[0].length, brace.index)));
                 current = brace.index + brace[0].length;
             } else if (found[regexes.eval_short]) {
                 tparams.eval_short_end.lastIndex = found.index + found[0].length;
@@ -247,7 +247,7 @@ function declare(_, is_node) {
                 }
                 if (b_count !== 0)
                     throw new Error("${ without a matching }");
-                appendPrint("escape_function(" + text.slice(found.index + found[0].length, brace.index) + ")");
+                appendPrint("escape_function(" + _trim(text.slice(found.index + found[0].length, brace.index)) + ")");
                 current = brace.index + brace[0].length;
             } else { // comment 
                 tparams.comment_end.lastIndex = found.index + found[0].length;
