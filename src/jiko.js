@@ -109,8 +109,7 @@ function declare(_, is_node) {
         "var print = function(t) { __p += t; };\n";
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-        "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n" +
-        "var exports = {};\n";
+        "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
 
     var compile = function(text, options) {
         options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
@@ -263,7 +262,7 @@ function declare(_, is_node) {
         escapePrint(to_add );
 
         if (options.fileMode) {
-            source = escapeDirectives + source + "return exports;\n";
+            source = escapeDirectives + "var exports = {};\n" + source + "return exports;\n";
         } else {
             source = (options.noEsc ? '' : escapeDirectives) + printDirectives +
                 "with (context || {}) {\n" + indent_(source) + "}\nreturn __p;\n";
