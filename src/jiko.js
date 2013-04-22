@@ -308,7 +308,7 @@ function declare(_, $) {
                 var fs = require("fs");
                 result = fs.readFileSync(filename, "utf8");
             }
-            return this.loadFileContent(result);
+            return this.loadFileContent(result, filename);
         },
         loadFileAsync: function(filename, success, error) {
             var self = this;
@@ -316,15 +316,17 @@ function declare(_, $) {
                 throw new Error("Async loading only available in a browser");
             }
             $.get(filename).pipe(function(content) {
-                return self.loadFileContent(content);
+                return self.loadFileContent(content, filename);
             }).done(success).fail(error);
         },
-        loadFileContent: function(file_content) {
+        loadFileContent: function(file_content, filename) {
             var code = this.compileFile(file_content);
+
+            var debug = filename ? "\n//@ sourceURL=" + filename : "";
 
             if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("jikotemplate");
-                var ncode = "window." + varname + " = (" + code + ")();";
+                var ncode = "window." + varname + " = (" + code + ")();" + debug;
                 var script = document.createElement("script");
                 script.type = "text/javascript";
                 script.text = ncode;
@@ -341,7 +343,7 @@ function declare(_, $) {
                 }
             }
 
-            return (new Function("return (" + code + ")();"))();
+            return eval("(" + code + ")();" + debug);
         },
         compileFile: function(file_content) {
             var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
