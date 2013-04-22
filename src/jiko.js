@@ -104,7 +104,7 @@ function declare(_, $) {
     var regex_count = 4;
 
     var printDirectives = "var __p = '';\n" +
-        "var print = function(t) { __p+=t; };\n";
+        "var print = function(t) { __p += t; };\n";
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
         "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
@@ -131,20 +131,31 @@ function declare(_, $) {
             return tmp;
         } : function(x) { return x };
         var appendPrint = ! options.fileMode ? function(t) {
-            source += t ? "__p+=" + t + ";\n" : '';
+            source += t ? "__p += " + t + ";\n" : '';
         }: function() {};
+        var escapePrint = function(t) {
+            t = (t || '').split("\n");
+            for(var i = 0; i < t.length; i++) {
+                var v = t[i];
+                if (i < t.length - 1)
+                    v += "\n";
+                else if (! v)
+                    continue;
+                appendPrint(escape_(v));
+            }
+        };
         while (found = allbegin.exec(text)) {
             var to_add = rmWhite(text.slice(current, found.index));
-            appendPrint(to_add ? escape_(to_add) : null);
+            escapePrint(to_add);
             current = found.index;
 
             // slash escaping handling
             var slashes = found[regexes.slashes] || "";
             var nbr = slashes.length;
             var nslash = slashes.slice(0, Math.floor(nbr / 2));
-            appendPrint(nbr !== 0 ? escape_(nslash) : null);
+            escapePrint(nbr !== 0 ? nslash : null);
             if (nbr % 2 !== 0) {
-                appendPrint(escape_(found[regexes.match]));
+                escapePrint(found[regexes.match]);
                 current = found.index + found[0].length;
                 allbegin.lastIndex = current;
                 continue;
@@ -244,7 +255,7 @@ function declare(_, $) {
             allbegin.lastIndex = current;
         }
         var to_add = rmWhite(text.slice(current, text_end));
-        appendPrint(to_add ? escape_(to_add) : null);
+        escapePrint(to_add );
 
         if (options.fileMode) {
             var header = escapeDirectives;
@@ -294,11 +305,11 @@ function declare(_, $) {
             if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("jikotemplate");
                 var previous = window[varname];
-                code = "window." + varname + " = (" + code + ")();";
+                var ncode = "window." + varname + " = (" + code + ")();";
                 var def = $.Deferred();
                 var script   = document.createElement("script");
                 script.type  = "text/javascript";
-                script.text  = code;
+                script.text  = ncode;
                 $("head")[0].appendChild(script);
                 $(script).ready(function() {
                     def.resolve();
