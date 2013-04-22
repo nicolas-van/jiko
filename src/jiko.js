@@ -179,8 +179,7 @@ function declare(_, is_node) {
                         throw new Error("Function with invalid name");
                     }
                     var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
-                    source += "var " + name  + " = function(context) {\n" + indent_(sub_compile.header + sub_compile.source
-                        + sub_compile.footer) + "};\n";
+                    source += "var " + name  + " = function(context) {\n" + indent_(sub_compile.source) + "};\n";
                     if (options.fileMode) {
                         source += "exports." + name + " = " + name + ";\n";
                     }
@@ -264,20 +263,14 @@ function declare(_, is_node) {
         escapePrint(to_add );
 
         if (options.fileMode) {
-            var header = escapeDirectives;
-            var footer = '';
+            source = escapeDirectives + source + "return exports;\n";
         } else {
-            var header = printDirectives +
-                (options.noEsc ? '' : escapeDirectives) +
-                "with (context || {}) {\n";
-            var footer = "}\nreturn __p;\n";
-            source = indent_(source);
+            source = (options.noEsc ? '' : escapeDirectives) + printDirectives +
+                "with (context || {}) {\n" + indent_(source) + "}\nreturn __p;\n";
         }
 
         return {
-            header: header,
             source: source,
-            footer: footer,
             end: restart
         };
     };
@@ -307,8 +300,7 @@ function declare(_, is_node) {
 
     jiko.compileFile = function(file_content) {
         var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
-        to_append = "return exports;\n";
-        var code = result.header + result.source + to_append + result.footer;
+        var code = result.source;
         code = indent_(code);
         code = "function() {\n" + code + "}";
         return code;
@@ -316,7 +308,7 @@ function declare(_, is_node) {
 
     jiko.buildTemplate = function(text, options) {
         var comp = compileTemplate(text, options);
-        var result = comp.header + comp.source + comp.footer;
+        var result = comp.source;
         var func = new Function('context', result);
         return func;
     };
