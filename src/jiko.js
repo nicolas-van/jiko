@@ -27,15 +27,15 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 if (typeof(exports) !== "undefined") { // nodejs
     var underscore = require("underscore");
-    underscore.extend(exports, declare(underscore, null));
+    underscore.extend(exports, declare(underscore, true));
 } else if (typeof(define) !== "undefined") { // amd
-    define(["underscore", "jquery"], declare);
+    define(["underscore"], declare);
 } else { // define global variable
-    jiko = declare(_, $);
+    jiko = declare(_);
 }
 
 
-function declare(_, $) {
+function declare(_, is_node) {
     var jiko = {};
 
     var escapes = {
@@ -284,17 +284,13 @@ function declare(_, $) {
         };
     };
 
-    jiko.loadFile = function(filename, options) {
-        options = _.defaults(options || {}, {includeInDom: $ ? true : false});
+    jiko.loadFile = function(filename) {
         var result;
-        if ($) {
-            $.ajax({
-                url: filename,
-                async: false,
-                success: function(res) {
-                    result = res;
-                }
-            });
+        if (! is_node) {
+            var req = new XMLHttpRequest();
+            req.open("GET", filename, false);
+            req.send();
+            result = req.responseText;
         } else {
             var fs = require("fs");
             result = fs.readFileSync(filename, "utf8");
@@ -303,29 +299,10 @@ function declare(_, $) {
     };
 
     jiko.loadFileContent = function(file_content, options) {
-        options = _.defaults(options || {}, {includeInDom: $ ? true : false});
+        options = options || {};
         var code = jiko.compileFile(file_content);
 
         var debug = options.filename ? "\n//@ sourceURL=" + options.filename : "";
-
-        if (options.includeInDom && $) {
-            var varname = _.uniqueId("jikotemplate");
-            var ncode = "window." + varname + " = (" + code + ")();" + debug;
-            var script = document.createElement("script");
-            script.type = "text/javascript";
-            script.text = ncode;
-            var previousValue = window[varname];
-            $("head")[0].appendChild(script);
-            var currentValue = window[varname];
-            $(script).ready(function() {
-                window[varname] = previousValue;
-            });
-            if (currentValue !== previousValue) {
-                return currentValue;
-            } else {
-                throw new Error("Exception while loading jiko template.");
-            }
-        }
 
         return eval("(" + code + ")();" + debug);
     };
