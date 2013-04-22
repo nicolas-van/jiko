@@ -285,7 +285,7 @@ function declare(_, is_node) {
             var fs = require("fs");
             result = fs.readFileSync(filename, "utf8");
         }
-        return jiko.loadFileContent(result, filename);
+        return jiko.loadFileContent(result, {filename: filename});
     };
 
     jiko.loadFileContent = function(file_content, options) {
