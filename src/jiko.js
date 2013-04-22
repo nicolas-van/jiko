@@ -126,13 +126,10 @@ function declare(_, is_node) {
                 return txt;
             var tmp = _.chain(txt.split("\n")).map(function(x) { return _trim(x) })
                 .reject(function(x) { return !x }).value().join("\n");
-            if (txt.length >= 1 && txt.charAt(0).match(/\s/))
+            if (txt.charAt(0).match(/\s/) && ! tmp.charAt(0).match(/\s/))
                 tmp = txt.charAt(0) + tmp;
-            if (txt.length >= 2 && txt.charAt(txt.length - 1).match(/\s/))
+            if (txt.charAt(txt.length - 1).match(/\s/) && ! tmp.charAt(tmp.length - 1).match(/\s/))
                 tmp += txt.charAt(txt.length - 1);
-            if (tmp.length >= 2 && ! _trim(tmp)) {
-                tmp = tmp.slice(0);
-            }
             return tmp;
         } : function(x) { return x };
         var appendPrint = ! options.fileMode ? function(t) {
