@@ -331,22 +331,13 @@ function declare(_, $) {
                 var previousValue = window[varname];
                 $("head")[0].appendChild(script);
                 var currentValue = window[varname];
-                var fallbacked = false;
                 $(script).ready(function() {
                     window[varname] = previousValue;
-                    if (fallbacked) {
-                        $(script).remove();
-                    }
                 });
-                // we want this method to behave synchronously, if the browser
-                // does not seem to support synchronous inclusion of scripts, we
-                // use new Function() instead
                 if (currentValue !== previousValue) {
                     return currentValue;
                 } else {
-                    fallbacked = true;
-                    if (typeof(console) !== "undefined")
-                        console.log("Could not include compiled Jiko in DOM or an error occured during that operation, fallbacking on new Function().");
+                    throw new Error("Exception while loading jiko template.");
                 }
             }
 
