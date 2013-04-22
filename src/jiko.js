@@ -128,6 +128,9 @@ function declare(_, $) {
                 tmp = txt.charAt(0) + tmp;
             if (txt.length >= 2 && txt.charAt(txt.length - 1).match(/\s/))
                 tmp += txt.charAt(txt.length - 1);
+            if (tmp.length >= 2 && ! _trim(tmp)) {
+                tmp = tmp[0];
+            }
             return tmp;
         } : function(x) { return x };
         var appendPrint = ! options.fileMode ? function(t) {
