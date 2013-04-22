@@ -295,51 +295,58 @@ function declare(_, $) {
             };
         },
         loadFile: function(filename) {
-            var self = this;
+            var result;
             if ($) {
-                return $.get(filename).pipe(function(content) {
-                    return self.loadFileContent(content);
+                $.ajax({
+                    url: filename,
+                    async: false,
+                    success: function(res) {
+                        result = res;
+                    }
                 });
             } else {
                 var fs = require("fs");
-                var content = fs.readFileSync(filename, "utf8");
-                return this.loadFileContent(content);
+                result = fs.readFileSync(filename, "utf8");
             }
+            return this.loadFileContent(result);
+        },
+        loadFileAsync: function(filename, success, error) {
+            var self = this;
+            if (! $) {
+                throw new Error("Async loading only available in a browser");
+            }
+            $.get(filename).pipe(function(content) {
+                return self.loadFileContent(content);
+            }).done(success).fail(error);
         },
         loadFileContent: function(file_content) {
             var code = this.compileFile(file_content);
 
             if (this.options.includeInDom && $) {
                 var varname = _.uniqueId("jikotemplate");
-                var previous = window[varname];
                 var ncode = "window." + varname + " = (" + code + ")();";
-                var def = $.Deferred();
-                var script   = document.createElement("script");
-                script.type  = "text/javascript";
-                script.text  = ncode;
+                var script = document.createElement("script");
+                script.type = "text/javascript";
+                script.text = ncode;
+                var previousValue = window[varname];
                 $("head")[0].appendChild(script);
+                var currentValue = window[varname];
+                var fallbacked = false;
                 $(script).ready(function() {
-                    def.resolve();
+                    window[varname] = previousValue;
+                    if (fallbacked) {
+                        $(script).remove();
+                    }
                 });
-                var script_result;
-                var loaded = false;
-                def.then(_.bind(function() {
-                    loaded = true;
-                    script_result = window[varname];
-                    window[varname] = previous;
-                }, this));
                 // we want this method to behave synchronously, if the browser
                 // does not seem to support synchronous inclusion of scripts, we
                 // use new Function() instead
-                if (loaded) {
-                    if (script_result) {
-                        return script_result;
-                    } else {
-                        throw new Error("Error during execution of a Jiko template's code");
-                    }
+                if (currentValue !== previousValue) {
+                    return currentValue;
                 } else {
+                    fallbacked = true;
                     if (typeof(console) !== "undefined")
-                        console.log("Could not include compiled Jiko in DOM, fallbacking on new Function().");
+                        console.log("Could not include compiled Jiko in DOM or an error occured during that operation, fallbacking on new Function().");
                 }
             }
 
