@@ -110,7 +110,7 @@ function declare(_, $) {
         "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
 
     var compileTemplate = function(text, options) {
-        options = _.extend({start: 0, noEsc: false, fileMode: false}, options);
+        options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
         start = options.start;
         var source = "";
         var current = start;
