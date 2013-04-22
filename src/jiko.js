@@ -284,95 +284,81 @@ function declare(_, $) {
         };
     };
 
-    jiko.TemplateEngine = function() {
-        this.__init__();
+    jiko.loadFile = function(filename, options) {
+        options = _.defaults(options || {}, {includeInDom: $ ? true : false});
+        var result;
+        if ($) {
+            $.ajax({
+                url: filename,
+                async: false,
+                success: function(res) {
+                    result = res;
+                }
+            });
+        } else {
+            var fs = require("fs");
+            result = fs.readFileSync(filename, "utf8");
+        }
+        return jiko.loadFileContent(result, filename);
     };
 
-    _.extend(jiko.TemplateEngine.prototype, {
-        __init__: function() {
-            this.options = {
-                includeInDom: $ ? true : false
-            };
-        },
-        loadFile: function(filename) {
-            var result;
-            if ($) {
-                $.ajax({
-                    url: filename,
-                    async: false,
-                    success: function(res) {
-                        result = res;
-                    }
-                });
+    jiko.loadFileContent = function(file_content, options) {
+        options = _.defaults(options || {}, {includeInDom: $ ? true : false});
+        var code = jiko.compileFile(file_content);
+
+        var debug = options.filename ? "\n//@ sourceURL=" + options.filename : "";
+
+        if (options.includeInDom && $) {
+            var varname = _.uniqueId("jikotemplate");
+            var ncode = "window." + varname + " = (" + code + ")();" + debug;
+            var script = document.createElement("script");
+            script.type = "text/javascript";
+            script.text = ncode;
+            var previousValue = window[varname];
+            $("head")[0].appendChild(script);
+            var currentValue = window[varname];
+            $(script).ready(function() {
+                window[varname] = previousValue;
+            });
+            if (currentValue !== previousValue) {
+                return currentValue;
             } else {
-                var fs = require("fs");
-                result = fs.readFileSync(filename, "utf8");
+                throw new Error("Exception while loading jiko template.");
             }
-            return this.loadFileContent(result, filename);
-        },
-        loadFileAsync: function(filename, success, error) {
-            var self = this;
-            if (! $) {
-                throw new Error("Async loading only available in a browser");
-            }
-            $.get(filename).pipe(function(content) {
-                return self.loadFileContent(content, filename);
-            }).done(success).fail(error);
-        },
-        loadFileContent: function(file_content, filename) {
-            var code = this.compileFile(file_content);
-
-            var debug = filename ? "\n//@ sourceURL=" + filename : "";
-
-            if (this.options.includeInDom && $) {
-                var varname = _.uniqueId("jikotemplate");
-                var ncode = "window." + varname + " = (" + code + ")();" + debug;
-                var script = document.createElement("script");
-                script.type = "text/javascript";
-                script.text = ncode;
-                var previousValue = window[varname];
-                $("head")[0].appendChild(script);
-                var currentValue = window[varname];
-                $(script).ready(function() {
-                    window[varname] = previousValue;
-                });
-                if (currentValue !== previousValue) {
-                    return currentValue;
-                } else {
-                    throw new Error("Exception while loading jiko template.");
-                }
-            }
-
-            return eval("(" + code + ")();" + debug);
-        },
-        compileFile: function(file_content) {
-            var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
-            var to_append = "";
-            var last = result.functions.length - 1;
-            _.each(_.range(result.functions.length), function(i) {
-                var name = result.functions[i];
-                to_append += name + ": " + name;
-                if (i !== last)
-                    to_append += ",";
-                to_append += "\n";
-            }, this);
-            to_append = indent_(to_append);
-            to_append = "return {\n" + to_append + "};\n";
-            var code = result.header + result.source + to_append + result.footer;
-            code = indent_(code);
-            code = "function() {\n" + code + "}";
-            return code;
-        },
-        buildTemplate: function(text) {
-            var comp = compileTemplate(text, _.extend({}, this.options));
-            var result = comp.header + comp.source + comp.footer;
-            var func = new Function('context', result);
-            return func;
-        },
-        eval: function(text, context) {
-            return this.buildTemplate(text)(context);
         }
-    });
+
+        return eval("(" + code + ")();" + debug);
+    };
+
+    jiko.compileFile = function(file_content) {
+        var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
+        var to_append = "";
+        var last = result.functions.length - 1;
+        _.each(_.range(result.functions.length), function(i) {
+            var name = result.functions[i];
+            to_append += name + ": " + name;
+            if (i !== last)
+                to_append += ",";
+            to_append += "\n";
+        });
+        to_append = indent_(to_append);
+        to_append = "return {\n" + to_append + "};\n";
+        var code = result.header + result.source + to_append + result.footer;
+        code = indent_(code);
+        code = "function() {\n" + code + "}";
+        return code;
+    };
+
+    jiko.buildTemplate = function(text, options) {
+        var comp = compileTemplate(text, options);
+        var result = comp.header + comp.source + comp.footer;
+        var func = new Function('context', result);
+        return func;
+    };
+
+    jiko.eval = function(text, context, options) {
+        return this.buildTemplate(text, options)(context);
+    };
 
     return jiko;
 };

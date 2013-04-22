@@ -8,16 +8,12 @@ var trim = function(t) {
     return t.replace(/^\s+|\s+$/g, ''); 
 };
 
-var te = new jiko.TemplateEngine();
-
 var transform = function(x) {
     return _.filter(_.map(x.split(/\s+/), function(el) { return trim(el); }),
         function(el) { return el; }).join(" ");
 };
 
-var load_def = te.loadFile("templates.html");
-
-$.when(load_def).pipe(function(templates) {
+var templates = jiko.loadFile("templates.html");
 
 test("base", function() {
     var r = templates.yop();
@@ -52,19 +48,19 @@ test("this", function() {
 });
 
 test("slash_escape", function() {
-    var tmpl = te.buildTemplate("\\${1+1}");
+    var tmpl = jiko.buildTemplate("\\${1+1}");
     equal(tmpl(), "${1+1}");
-    var tmpl = te.buildTemplate("\\\\${1+1}");
+    var tmpl = jiko.buildTemplate("\\\\${1+1}");
     equal(tmpl(), "\\2");
-    var tmpl = te.buildTemplate("\\\\\\${1+1}");
+    var tmpl = jiko.buildTemplate("\\\\\\${1+1}");
     equal(tmpl(), "\\${1+1}");
-    var tmpl = te.buildTemplate("\\\\\\\\${1+1}");
+    var tmpl = jiko.buildTemplate("\\\\\\\\${1+1}");
     equal(tmpl(), "\\\\2");
-    var tmpl = te.buildTemplate("\\\\\\\\\\${1+1}");
+    var tmpl = jiko.buildTemplate("\\\\\\\\\\${1+1}");
     equal(tmpl(), "\\\\${1+1}");
-    var tmpl = te.buildTemplate("\\${1+1}\n${1+1}");
+    var tmpl = jiko.buildTemplate("\\${1+1}\n${1+1}");
     equal(tmpl(), "${1+1}\n2");
-    var tmpl = te.buildTemplate("\\\\${1+1}\n${1+1}");
+    var tmpl = jiko.buildTemplate("\\\\${1+1}\n${1+1}");
     equal(tmpl(), "\\2\n2");
 });
 
@@ -94,32 +90,29 @@ test("print", function() {
 });
 
 test("singleLineEventSlashEscape", function() {
-    var r = te.eval("\n\\%print(1+1)");
+    var r = jiko.eval("\n\\%print(1+1)");
     equal(r, "\n%print(1+1)");
-    var r = te.eval("\n\\\\%print(1+1)");
+    var r = jiko.eval("\n\\\\%print(1+1)");
     equal(r, "\n\\2");
 });
 
 test("keepUsefulWhitespaces", function() {
-    var r = te.eval("Foo ${bar}", {bar:"Bar"});
+    var r = jiko.eval("Foo ${bar}", {bar:"Bar"});
     equal(r, "Foo Bar");
-    var r = te.eval("${bar} Foo", {bar:"Bar"});
+    var r = jiko.eval("${bar} Foo", {bar:"Bar"});
     equal(r, "Bar Foo");
-    var r = te.eval("Foo\n%if(true===true){\nBar\n%}");
+    var r = jiko.eval("Foo\n%if(true===true){\nBar\n%}");
     equal(transform(r), "Foo Bar");
 });
 
 test("doesNotAddSpaces", function() {
-    var r = te.eval("Foo${bar}", {bar:"Bar"});
+    var r = jiko.eval("Foo${bar}", {bar:"Bar"});
     equal(r, "FooBar");
-    var r = te.eval("${bar}Foo", {bar:"Bar"});
+    var r = jiko.eval("${bar}Foo", {bar:"Bar"});
     equal(r, "BarFoo");
 });
 
 test("singleLinePreviousSpace", function() {
     var r = templates.singleLinePreviousSpace();
     equal(transform(r), "abc def");
-});
-
-
 });

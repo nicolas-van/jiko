@@ -28,17 +28,10 @@ var namespaceFromFileName = function(filename) {
 var compile = program.command('compile <file>');
 compile.description('Compile a Jiko template file to a javascript file.')
     .option('-o, --output', 'Do not automatically write file, outputs in console instead.')
-    .option('-i, --noindent', 'Do not indent file.')
-    .option('-w, --whitespaces', 'Do not remove whitespaces.')
     .action(function(filename, env){
         var content = fs.readFileSync(filename, "utf8");
         var namespace = namespaceFromFileName(filename);
-        var te = new jiko.TemplateEngine();
-        _.extend(te.options, {
-            indent: ! compile.noindent,
-            removeWhitespaces: ! compile.whitespaces,
-        });
-        var compiled = te.compileFile(content);
+        var compiled = jiko.compileFile(content);
         compiled = "(function() {\n" +
             "var declare = " + compiled + ";\n" +
             "if (typeof(define) !== 'undefined') {\n" +
