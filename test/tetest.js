@@ -48,19 +48,19 @@ test("this", function() {
 });
 
 test("slash_escape", function() {
-    var tmpl = jiko.buildTemplate("\\${1+1}");
+    var tmpl = jiko.loadTemplate("\\${1+1}");
     equal(tmpl(), "${1+1}");
-    var tmpl = jiko.buildTemplate("\\\\${1+1}");
+    var tmpl = jiko.loadTemplate("\\\\${1+1}");
     equal(tmpl(), "\\2");
-    var tmpl = jiko.buildTemplate("\\\\\\${1+1}");
+    var tmpl = jiko.loadTemplate("\\\\\\${1+1}");
     equal(tmpl(), "\\${1+1}");
-    var tmpl = jiko.buildTemplate("\\\\\\\\${1+1}");
+    var tmpl = jiko.loadTemplate("\\\\\\\\${1+1}");
     equal(tmpl(), "\\\\2");
-    var tmpl = jiko.buildTemplate("\\\\\\\\\\${1+1}");
+    var tmpl = jiko.loadTemplate("\\\\\\\\\\${1+1}");
     equal(tmpl(), "\\\\${1+1}");
-    var tmpl = jiko.buildTemplate("\\${1+1}\n${1+1}");
+    var tmpl = jiko.loadTemplate("\\${1+1}\n${1+1}");
     equal(tmpl(), "${1+1}\n2");
-    var tmpl = jiko.buildTemplate("\\\\${1+1}\n${1+1}");
+    var tmpl = jiko.loadTemplate("\\\\${1+1}\n${1+1}");
     equal(tmpl(), "\\2\n2");
 });
 

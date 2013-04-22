@@ -112,7 +112,7 @@ function declare(_, is_node) {
         "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n" +
         "var exports = {};\n";
 
-    var compileTemplate = function(text, options) {
+    var compile = function(text, options) {
         options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
         start = options.start;
         var source = "";
@@ -178,7 +178,7 @@ function declare(_, is_node) {
                     if (! name || ! name.match(/^\w+$/)) {
                         throw new Error("Function with invalid name");
                     }
-                    var sub_compile = compileTemplate(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
+                    var sub_compile = compile(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
                     source += "var " + name  + " = function(context) {\n" + indent_(sub_compile.source) + "};\n";
                     if (options.fileMode) {
                         source += "exports." + name + " = " + name + ";\n";
@@ -299,19 +299,24 @@ function declare(_, is_node) {
     };
 
     jiko.compileFile = function(file_content) {
-        var code = compileTemplate(file_content, {fileMode: true}).source;
+        var code = compile(file_content, {fileMode: true}).source;
         code = "function() {\n" + indent_(code) + "}";
         return code;
     };
 
-    jiko.buildTemplate = function(text) {
-        var code = compileTemplate(text).source;
-        var func = new Function('context', code);
-        return func;
+    jiko.eval = function(text, context) {
+        return this.loadTemplate(text)(context);
     };
 
-    jiko.eval = function(text, context) {
-        return this.buildTemplate(text)(context);
+    jiko.loadTemplate = function(text) {
+        var code = jiko.compileTemplate(text);
+        return new Function("return (" + code + ");")();
+    };
+
+    jiko.compileTemplate = function(text) {
+        var code = compile(text).source;
+        code = "function(context) {\n" + indent_(code) + "}";
+        return code;
     };
 
     return jiko;
