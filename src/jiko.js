@@ -299,22 +299,19 @@ function declare(_, is_node) {
     };
 
     jiko.compileFile = function(file_content) {
-        var result = compileTemplate(file_content, _.extend({}, {fileMode: true}));
-        var code = result.source;
-        code = indent_(code);
-        code = "function() {\n" + code + "}";
+        var code = compileTemplate(file_content, {fileMode: true}).source;
+        code = "function() {\n" + indent_(code) + "}";
         return code;
     };
 
-    jiko.buildTemplate = function(text, options) {
-        var comp = compileTemplate(text, options);
-        var result = comp.source;
-        var func = new Function('context', result);
+    jiko.buildTemplate = function(text) {
+        var code = compileTemplate(text).source;
+        var func = new Function('context', code);
         return func;
     };
 
-    jiko.eval = function(text, context, options) {
-        return this.buildTemplate(text, options)(context);
+    jiko.eval = function(text, context) {
+        return this.buildTemplate(text)(context);
     };
 
     return jiko;
