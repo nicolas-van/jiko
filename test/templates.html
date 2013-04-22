@@ -87,13 +87,11 @@
     a multi line comment *}
     Test
 {% end %}
-{% function name="multiSingleLine" %}
-    % if (true
-    %     === true) {
-        Test
-    % }
-{% end %}
 {% function name="printtest" %}
     % print("Test")
+{% end %}
+{% function name="singleLinePreviousSpace" %}
+    abc
+    % print("def")
 {% end %}
 

@@ -26,7 +26,7 @@ test("base", function() {
     equal(trim(r), "azerty");
     r = templates.test2({lst: [1, 2, 3]});
     r = transform(r);
-    equal(r, "1 2 3"); 
+    equal(r, "1 2 3");
     r = templates.test3({lst: [2, 3, 4]});
     r = transform(r);
     equal(r, "2 3 4");
@@ -88,23 +88,16 @@ test("multiComment", function() {
     equal(transform(r), "Test");
 });
 
-test("multiSingleLine", function() {
-    var r = templates.multiSingleLine();
-    equal(transform(r), "Test");
-    r = te.eval("\n\n%if (true === true) {\nTest\n%}\n\n");
-    equal(transform(r), "Test");
-});
-
 test("print", function() {
     var r = templates.printtest();
     equal(transform(r), "Test");
 });
 
 test("singleLineEventSlashEscape", function() {
-    var r = te.eval("\\\n%print(1+1)");
+    var r = te.eval("\n\\%print(1+1)");
     equal(r, "\n%print(1+1)");
-    var r = te.eval("\\\\\n%print(1+1)");
-    equal(r, "\\2");
+    var r = te.eval("\n\\\\%print(1+1)");
+    equal(r, "\n\\2");
 });
 
 test("keepUsefulWhitespaces", function() {
@@ -112,7 +105,7 @@ test("keepUsefulWhitespaces", function() {
     equal(r, "Foo Bar");
     var r = te.eval("${bar} Foo", {bar:"Bar"});
     equal(r, "Bar Foo");
-    var r = te.eval("Foo\n%if(true===true)\nBar", {bar:"Bar"});
+    var r = te.eval("Foo\n%if(true===true){\nBar\n%}");
     equal(transform(r), "Foo Bar");
 });
 
@@ -121,6 +114,11 @@ test("doesNotAddSpaces", function() {
     equal(r, "FooBar");
     var r = te.eval("${bar}Foo", {bar:"Bar"});
     equal(r, "BarFoo");
+});
+
+test("singleLinePreviousSpace", function() {
+    var r = templates.singleLinePreviousSpace();
+    equal(transform(r), "abc def");
 });
 
 

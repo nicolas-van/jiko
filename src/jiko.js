@@ -64,21 +64,23 @@ function declare(_, $) {
         return t.replace(/^\s+|\s+$/g, ''); 
     };
     var tparams = {
-        block: /\{%\s*(\w+)(?:\s+(?:\w+)\s*=\s*(?:(?:"(?:.+?)")|(?:'(?:.+?)')))*\s*%\}/g,
-        block_properties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/g,
-        comment_multi_begin: /\{\*/g,
-        comment_multi_end: /\*\}/g,
-        eval_long_begin: /<%/g,
-        eval_long_end: /%>/g,
-        eval_short_begin: /(?:^|\n)[[ \t]*%(?!{)/g,
-        eval_short_end: /\n|$/g,
-        escape_begin: /\${/g,
-        interpolate_begin: /%{/g,
-        comment_begin: /##/g,
-        comment_end: /\n|$/g
+        block: /\{%\s*(\w+)(?:\s+(?:\w+)\s*=\s*(?:(?:"(?:.+?)")|(?:'(?:.+?)')))*\s*%\}/gm,
+        block_properties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/gm,
+        comment_multi_begin: /\{\*/gm,
+        comment_multi_end: /\*\}/gm,
+        eval_long_begin: /<%/gm,
+        eval_long_end: /%>/gm,
+        eval_short_begin: /^\\*[ \t]*%(?!{)/gm,
+        eval_short_end: /\n|$/gm,
+        escape_begin: /\${/gm,
+        interpolate_begin: /%{/gm,
+        comment_begin: /##/gm,
+        comment_end: /\n|$/gm,
+        slashes: /\\*/gm,
+        slash_begin: /^\\*/g
     };
     var allbegin = new RegExp(
-        "((?:\\\\)*)(" +
+        "(" + tparams.slashes.source + ")(" +
         "(" + tparams.block.source + ")|" +
         "(" + tparams.comment_multi_begin.source + ")|" +
         "(" + tparams.eval_long_begin.source + ")|" +
@@ -87,7 +89,7 @@ function declare(_, $) {
         "(" + tparams.escape_begin.source + ")|" +
         "(" + tparams.comment_begin.source + ")" +
         ")"
-    , "g");
+    , "gm");
     allbegin.global = true;
     var regexes = {
         slashes: 1,
@@ -129,7 +131,7 @@ function declare(_, $) {
             if (txt.length >= 2 && txt.charAt(txt.length - 1).match(/\s/))
                 tmp += txt.charAt(txt.length - 1);
             if (tmp.length >= 2 && ! _trim(tmp)) {
-                tmp = tmp[0];
+                tmp = tmp.slice(0);
             }
             return tmp;
         } : function(x) { return x };
@@ -153,12 +155,14 @@ function declare(_, $) {
             current = found.index;
 
             // slash escaping handling
-            var slashes = found[regexes.slashes] || "";
+            tparams.slash_begin.lastIndex = 0;
+            var find_slash = tparams.slash_begin.exec(found[0]);
+            var slashes = find_slash ? find_slash[0] : "";
             var nbr = slashes.length;
             var nslash = slashes.slice(0, Math.floor(nbr / 2));
             escapePrint(nbr !== 0 ? nslash : null);
             if (nbr % 2 !== 0) {
-                escapePrint(found[regexes.match]);
+                escapePrint(found[0].slice(slashes.length));
                 current = found.index + found[0].length;
                 allbegin.lastIndex = current;
                 continue;
