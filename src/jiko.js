@@ -294,7 +294,7 @@ function declare(_, is_node) {
 
         var debug = options.filename ? "\n//@ sourceURL=" + options.filename : "";
 
-        return eval("(" + code + ")();" + debug);
+        return new Function("return (" + code + ")();" + debug)();
     };
 
     jiko.compileFile = function(file_content) {
