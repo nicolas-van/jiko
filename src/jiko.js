@@ -304,7 +304,7 @@ function declare(_, is_node) {
     };
 
     jiko.eval = function(text, context) {
-        return this.loadTemplate(text)(context);
+        return jiko.loadTemplate(text)(context);
     };
 
     jiko.loadTemplate = function(text) {
