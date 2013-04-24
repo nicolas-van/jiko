@@ -94,4 +94,9 @@
     abc
     % print("def")
 {% end %}
-
+{% function name="multiSingleLine" %}
+    % if (true
+    %     === true) {
+        Test
+    % }
+{% end %}

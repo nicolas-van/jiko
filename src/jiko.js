@@ -230,7 +230,7 @@ function declare(_, is_node) {
                 if (!end)
                     throw new Error("impossible state!!");
                 source += _trim(text.slice(found.index + found[0].length, end.index)) + "\n";
-                current = end.index;
+                current = end.index + end[0].length;
             } else if (found[regexes.escape]) {
                 var braces = /{|}/g;
                 braces.lastIndex = found.index + found[0].length;

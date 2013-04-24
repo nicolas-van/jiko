@@ -116,3 +116,10 @@ test("singleLinePreviousSpace", function() {
     var r = templates.singleLinePreviousSpace();
     equal(transform(r), "abc def");
 });
+
+test("multiSingleLine", function() {
+    var r = templates.multiSingleLine();
+    equal(transform(r), "Test");
+    r = jiko.eval("\n\n%if (true === true) {\nTest\n%}\n\n");
+    equal(transform(r), "Test");
+});
