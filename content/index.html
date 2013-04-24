@@ -4,19 +4,17 @@ extends: base.j2
 
 {% set hideSideContent = True %}
 
-{% block sideContent %}
-<div class="leftLogo">
-    <img src="/static/img/ring.svg"/>
-</div>
-<h3>About Stuffs</h3>
-<p>This is a sample</p>
-{% endblock sideContent %}
-
 {% block mainContent %}
-{% markdown %}
 
-Welcome to this empty site.
-===========================
+<div class="frontPageHeader">
+    <img src="/static/img/horse.svg"/>
+    <div>
+        <span>Jiko</span>
+        Template engine for Javascript
+    </div>
+</div>
+
+{% markdown %}
 
 Lorem ipsum [dolor sit amet][], consectetur *adipisicing* elit, sed do
 **eiusmod** tempor incididunt ut labore et dolore magna aliqua. Ut enim
