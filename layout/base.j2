@@ -3,6 +3,18 @@
 <html class="progdesign">
 <head>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>{% block title %}{{ resource.meta.title }}{% endblock %}</title>
+    <meta name="description" content="{{ resource.meta.description }}">
+    <meta name="author" content="{{ resource.meta.author }}">
+
+    <!--  Mobile viewport optimized: j.mp/bplateviewport -->
+    <meta name="viewport" content="{{ resource.meta.viewport }}">
+
+    {% block favicons %}
+    <!-- Place favicon.ico & apple-touch-icon.png
+        in the root of your domain and delete these references -->
+    <link rel="shortcut icon" href="/static/img/favicon.ico">
+    {% endblock favicons %}
     <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
     <script src="/static/js/less.js" type="text/javascript"></script>
     {% block head %}
