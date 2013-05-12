@@ -28,6 +28,7 @@
 
     .base_style() {
         @import url(normalize.less);
+        @import url(pygments.less);
         font-family: "Lora" serif;
         h1, h2, h3, h4 {
             font-weight: normal;
@@ -41,8 +42,12 @@
         p, li {
             text-align: justify;
         }
-        code {
+        .highlight>pre, pre>code {
             font-size: (@base_text_size * 0.7);
+            display: block;
+            background: #eee;
+            padding: 10px;
+            border: 1px solid #ddd;
         }
     }
     .base_style();

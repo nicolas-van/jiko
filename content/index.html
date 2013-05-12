@@ -18,60 +18,35 @@ description: Home Page of the Jiko Template Engine
 
 {% markdown %}
 
-Lorem ipsum [dolor sit amet][], consectetur *adipisicing* elit, sed do
-**eiusmod** tempor incididunt ut labore et dolore magna aliqua. Ut enim
-ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-in voluptate velit esse cillum dolore eu fugiat nulla pariatur. “This is
-a citation inside the text.” Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+Jiko is a modern and easy to use template engine for Javascript. Its objective
+is to provide to Javascript programmers a way to write templates with an
+engine as powerful as server-side state of the art template engines like
+Jinja2 and Mako.
 
-  [dolor sit amet]: http://google.com
+{% syntax "xml+mako" %}
+<%
+    var array = _.range(1, 11);
+%>
+<div>
+    % _.each(array, function(el) {
+    <div>Hello world ${el} times!</div>
+    % });
+</div>
+{% endsyntax %}
 
-> This is a citation. Duis aute irure dolor in reprehenderit in
-> voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-> sint occaecat cupidatat non proident, sunt in culpa qui officia
-> deserunt mollit anim id est laborum.
+Jiko's features:
 
-    // You may want to place these lines inside an onload handler
-    CFInstall.check({
-        mode: "overlay"
-    });
+* Its syntax is as simple and direct as possible. Influenced by well-known
+  template engines.
+* *Don't reinvent the wheel!* Expressions are pure Javascript.
+* Allows multiple templates to be defined in a single template file.
+* Compiles templates directly to Javascript to be as fast as possible.
+* Allows browser-side on-the-fly compilation for development and server-side
+  compilation for production.
+* Works in a browser and inside Node.js.
 
-Welcome to this empty site.
----------------------------
+Interested? Take a look at the [Quick Start](/quickstart.html).
 
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
-
--   Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua.
--   Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-### Welcome to this empty site.
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
-
-#### Welcome to this empty site.
-
-Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.
 {%endmarkdown%}
+
 {% endblock mainContent %}

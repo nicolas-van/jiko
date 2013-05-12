@@ -31,54 +31,26 @@
     </div>
 </div>
 
-<p>Lorem ipsum <a href="http://google.com">dolor sit amet</a>, consectetur <em>adipisicing</em> elit, sed do
-<strong>eiusmod</strong> tempor incididunt ut labore et dolore magna aliqua. Ut enim
-ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit
-in voluptate velit esse cillum dolore eu fugiat nulla pariatur. “This is
-a citation inside the text.” Excepteur sint occaecat cupidatat non
-proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-<blockquote>
-<p>This is a citation. Duis aute irure dolor in reprehenderit in
-voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-sint occaecat cupidatat non proident, sunt in culpa qui officia
-deserunt mollit anim id est laborum.</p>
-</blockquote>
-<pre><code>// You may want to place these lines inside an onload handler
-CFInstall.check({
-    mode: "overlay"
-});
-</code></pre>
-<h2>Welcome to this empty site.</h2>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.</p>
+<p>Jiko is a modern and easy to use template engine for Javascript. Its objective
+is to provide to Javascript programmers a way to write templates with an
+engine as powerful as server-side state of the art template engines like
+Jinja2 and Mako.</p>
+<div class="highlight"><pre><span class="cp">&lt;%</span><br />    <span class="n">var</span> <span class="n">array</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span><br /><span class="cp">%&gt;</span><br /><span class="nt">&lt;div&gt;</span><br />    <span class="cp">%</span> <span class="n">_</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span><br />    <span class="nt">&lt;div&gt;</span>Hello world <span class="cp">${</span><span class="n">el</span><span class="cp">}</span> times!<span class="nt">&lt;/div&gt;</span><br />    <span class="cp">%</span> <span class="p">});</span><br /><span class="nt">&lt;/div&gt;</span><br /></pre></div>
+
+<p><br />
+Jiko's features:</p>
 <ul>
-<li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
-<li>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
-    eiusmod tempor incididunt ut labore et dolore magna aliqua.</li>
+<li>Its syntax is as simple and direct as possible. Influenced by well-known
+  template engines.</li>
+<li><em>Don't reinvent the wheel!</em> Expressions are pure Javascript.</li>
+<li>Allows multiple templates to be defined in a single template file.</li>
+<li>Compiles templates directly to Javascript to be as fast as possible.</li>
+<li>Allows browser-side on-the-fly compilation for development and server-side
+  compilation for production.</li>
+<li>Works in a browser and inside Node.js.</li>
 </ul>
-<h3>Welcome to this empty site.</h3>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.</p>
-<h4>Welcome to this empty site.</h4>
-<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
-occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-mollit anim id est laborum.</p>                </div>
+<p>Interested? Take a look at the <a href="/quickstart.html">Quick Start</a>.</p>
+                </div>
             </div>
         </div>
         <div class="footerRow">
