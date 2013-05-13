@@ -3,37 +3,35 @@
 <html class="progdesign">
 <head>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>{% block title %}{{ resource.meta.title }}{% endblock %}</title>
-    <meta name="description" content="{{ resource.meta.description }}">
-    <meta name="author" content="{{ resource.meta.author }}">
+    <title>Jiko - Documentation</title>
+    <meta name="description" content="Documentation of the Jiko Template Engine">
+    <meta name="author" content="">
 
-    {% block favicons %}
-    <!-- Place favicon.ico & apple-touch-icon.png
+        <!-- Place favicon.ico & apple-touch-icon.png
         in the root of your domain and delete these references -->
     <link rel="shortcut icon" href="/static/img/favicon.ico">
-    {% endblock favicons %}
-    <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
+        <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
     <script src="/static/js/less.js" type="text/javascript"></script>
-    {% block head %}
-    {% endblock head %}
-</head>
+        </head>
 </body>
 
     <div class="mainHorizontalTable">
         <div class="contentRow">
             <div class="contentTable">
-                {% if not (hideSideContent is defined) %}
-                <div class="leftAreaCell">
-                    {% block sideContent %}
-                    {% endblock sideContent %}
+                                <div class="leftAreaCell">
+                    
+<div class="sidePageHeader">
+    <a href="/"><img src="/static/img/horse_200.png"></img></a>
+    <div>
+        <h1>Jiko</h1>
+        <h2>Template engine for Javascript</h2>
+    </div>
+</div>
+
                 </div>
-                {% endif %}
-                <div class="rightAreaCell">
-                    {% block headerMainContent %}
-                    {% endblock headerMainContent %}
-                    {% block mainContent %}
-                    {% endblock mainContent %}
-                </div>
+                                <div class="rightAreaCell">
+                                                            <h1>Documentation</h1>
+<p>This is where the docs will be.</p>                </div>
             </div>
         </div>
         <div class="footerRow">

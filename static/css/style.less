@@ -76,7 +76,6 @@
                     width: 220px;
                     padding: 20px 10px;
                     vertical-align: top;
-                    .txt_sizing(@base_text_size * 0.8);
                     //height: 1000px;
                 }
 
@@ -131,6 +130,29 @@
         display: table;
         height: 300px;
         margin: 0 auto -20px auto;
+    }
+
+    .sidePageHeader {
+        >div {
+            font-family: "Quando";
+            >h1 {
+                font-size: 40px;
+                margin: 0 30px;
+            }
+            >h2 {
+                font-size: 15px;
+                margin: 0 30px;
+            }
+        }
+        height: 300px;
+    }
+
+    .horizontalMenu {
+        text-align: center;
+        > a {
+            font-style: italic;
+            padding: 0 10px;
+        }
     }
 
 }
