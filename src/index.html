@@ -1,13 +1,17 @@
----
-extends: base.j2
-title: Jiko - Template Engine for Javascript
-description: Home Page of the Jiko Template Engine
----
+<%!
+    title = "Jiko - Template Engine for Javascript"
+    description = "Home Page of the Jiko Template Engine"
+    hideSideContent = True
+%>
+
+<%inherit file="/base.mako"/>
+
+<%namespace name="macros" file="/macros.mako"/>
 
 {% set hideSideContent = True %}
 {% import 'macros.j2' as macros %}
 
-{% block mainContent %}
+<%block name="mainContent">
 
 <div class="frontPageHeader">
     <img src="/static/img/horse_300.png"/>
@@ -18,26 +22,26 @@ description: Home Page of the Jiko Template Engine
 </div>
 
 <div class="horizontalMenu">
-    {{ macros.navigation() }}
+    ${macros.navigation()}
 </div>
 
-{% markdown %}
+<%macros:markdown>
 
 Jiko is a modern and easy to use template engine for Javascript. Its objective
 is to provide to Javascript programmers a way to write templates with an
 engine as powerful as server-side state of the art template engines like
 Jinja2 and Mako.
 
-{% syntax "xml+mako" %}
-<%
-    var array = _.range(1, 11);
-%>
-<div>
-    % _.each(array, function(el) {
-    <div>Hello world ${el} times!</div>
-    % });
-</div>
-{% endsyntax %}
+<%text>
+    <%
+        var array = _.range(1, 11);
+    %>
+    <div>
+        % _.each(array, function(el) {
+        <div>Hello world ${el} times!</div>
+        % });
+    </div>
+</%text>
 
 Jiko's features:
 
@@ -52,6 +56,6 @@ Jiko's features:
 
 Interested? Take a look at the [Quick Start](/docs/quickstart.html).
 
-{%endmarkdown%}
+</%macros:markdown>
 
-{% endblock mainContent %}
+</%block>

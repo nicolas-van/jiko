@@ -1,25 +1,31 @@
+
 <!DOCTYPE html>
 
 <html class="progdesign">
 <head>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Jiko - Template Engine for Javascript</title>
-    <meta name="description" content="Home Page of the Jiko Template Engine">
-    <meta name="author" content="">
+    <meta name="description" content="Jiko - Template Engine for Javascript">
+    <meta name="author" content="Nicolas Vanhoren">
 
-        <!-- Place favicon.ico & apple-touch-icon.png
-        in the root of your domain and delete these references -->
+    
     <link rel="shortcut icon" href="/static/img/favicon.ico">
-        <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
+    
+    <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
     <script src="/static/js/less.js" type="text/javascript"></script>
-        </head>
+    
+    
+</head>
 </body>
 
     <div class="mainHorizontalTable">
         <div class="contentRow">
             <div class="contentTable">
-                                <div class="rightAreaCell">
-                                                            
+                <div class="rightAreaCell">
+                    
+                    
+                    
+
 <div class="frontPageHeader">
     <img src="/static/img/horse_300.png"/>
     <div>
@@ -29,18 +35,27 @@
 </div>
 
 <div class="horizontalMenu">
+    
     <a href="/">home</a>
     <a href="/docs/docs.html">documentation</a>
+
 </div>
+
 
 <p>Jiko is a modern and easy to use template engine for Javascript. Its objective
 is to provide to Javascript programmers a way to write templates with an
 engine as powerful as server-side state of the art template engines like
 Jinja2 and Mako.</p>
-<div class="highlight"><pre><span class="cp">&lt;%</span><br />    <span class="n">var</span> <span class="n">array</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span><br /><span class="cp">%&gt;</span><br /><span class="nt">&lt;div&gt;</span><br />    <span class="cp">%</span> <span class="n">_</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span><br />    <span class="nt">&lt;div&gt;</span>Hello world <span class="cp">${</span><span class="n">el</span><span class="cp">}</span> times!<span class="nt">&lt;/div&gt;</span><br />    <span class="cp">%</span> <span class="p">});</span><br /><span class="nt">&lt;/div&gt;</span><br /></pre></div>
-
-<p><br />
-Jiko's features:</p>
+<pre><code>&lt;%
+    var array = _.range(1, 11);
+%&gt;
+&lt;div&gt;
+    % _.each(array, function(el) {
+    &lt;div&gt;Hello world ${el} times!&lt;/div&gt;
+    % });
+&lt;/div&gt;
+</code></pre>
+<p>Jiko's features:</p>
 <ul>
 <li>Its syntax is as simple and direct as possible. Influenced by well-known
   template engines.</li>
@@ -52,6 +67,9 @@ Jiko's features:</p>
 <li>Works in a browser and inside Node.js.</li>
 </ul>
 <p>Interested? Take a look at the <a href="/docs/quickstart.html">Quick Start</a>.</p>
+
+
+
                 </div>
             </div>
         </div>

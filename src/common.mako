@@ -1,6 +1,6 @@
-{% extends "base.j2" %}
+<%inherit file="/base.mako"/>
 
-{% block sideContent %}
+<%block name="sideContent">
 
 <div class="sidePageHeader">
     <a href="/"><img src="/static/img/horse_200.png"></img></a>
@@ -10,4 +10,4 @@
     </div>
 </div>
 
-{% endblock sideContent %}
+</%block>
