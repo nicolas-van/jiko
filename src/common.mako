@@ -1,4 +1,4 @@
-<%inherit file="/base.mako"/>
+<%inherit file="/common/base.mako"/>
 
 <%block name="sideContent">
 
