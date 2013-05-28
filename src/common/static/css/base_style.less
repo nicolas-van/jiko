@@ -1,0 +1,107 @@
+
+@import url(http://fonts.googleapis.com/css?family=Lora:400,700);
+
+.progdesign {
+
+    .txt_sizing(@base_size) {
+        font-size: @base_size;
+        h1 {
+            font-size: (@base_size * 2.2);
+        }
+        h2 {
+            font-size: (@base_size * 1.8);
+        }
+        h3 {
+            font-size: (@base_size * 1.6);
+        }
+        h4 {
+            font-size: (@base_size * 1.4);
+        }
+        h5 {
+            font-size: (@base_size * 1.2);
+        }
+    }
+
+    @base_text_size: 19px;
+    @highlight_color: #0063B4;
+
+    .base_style() {
+        @import url(normalize.less);
+        @import url(pygments.less);
+        font-family: "Lora" serif;
+        h1, h2, h3, h4 {
+            font-weight: normal;
+            margin: 28px 0px;
+        }
+        .txt_sizing(@base_text_size);
+        a {
+            text-decoration: none;
+            color: @highlight_color;
+        }
+        p, li {
+            text-align: justify;
+        }
+        .highlight>pre, pre>code {
+            font-size: (@base_text_size * 0.7);
+            display: block;
+            background: #eee;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    }
+    .base_style();
+
+    body {
+        height: 100%;
+    }
+
+    .mainHorizontalTable {
+        margin: 0 auto;
+        height: 100%;
+        display: table;
+
+        >.contentRow {
+            height: 100%;
+            display: table-row;
+
+            >.contentTable {
+                margin: 0 auto;
+                display: table;
+                height: 100%;
+
+                >.leftAreaCell {
+                    display: table-cell;
+                    box-sizing: border-box;
+                    width: 220px;
+                    padding: 20px 10px;
+                    vertical-align: top;
+                    //height: 1000px;
+                }
+
+                >.rightAreaCell {
+                    display: table-cell;
+                    box-sizing: border-box;
+                    width: 740px;
+                    padding: 0 20px;
+                    vertical-align: top;
+                }
+            }
+        }
+
+        >.footerRow {
+            display: table-row;
+            >.footerCell {
+                display: table-cell;
+                font-size: 0.8em;
+                text-align: center;
+                color: rgb(127, 127, 127);
+                padding: 20px;
+            }
+        }
+    }
+
+}
+
+html.progdesign {
+    height: 100%;
+}

@@ -13,12 +13,12 @@
     <meta name="author" content="Nicolas Vanhoren">
 
     <%block name="favicons">
-    <link rel="shortcut icon" href="/static/img/favicon.ico">
+    <link rel="shortcut icon" href="/common/static/img/icon.ico">
     </%block>
-    <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
-    <script src="/common/static/js/less.js" type="text/javascript"></script>
+    <link rel="stylesheet/less" type="text/css" href="/common/static/css/base_style.less" />
     <%block name="head">
     </%block>
+    <script src="/common/static/js/less.js" type="text/javascript"></script>
 </head>
 </body>
 
