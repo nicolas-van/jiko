@@ -1,3 +1,9 @@
+<%!
+    title = "Jiko - Template Engine for Javascript"
+    description = "Home Page of the Jiko Template Engine"
+    sideContent = True
+%>
+
 <%inherit file="/site_base.mako"/>
 
 <%block name="sideContent">
