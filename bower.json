@@ -1,0 +1,15 @@
+{
+  "name": "jiko",
+  "version": "0.7.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "underscore": ">=1.4.4"
+  },
+  "devDependencies": {
+    "qunit": ">=1.12.0"
+  }
+}
