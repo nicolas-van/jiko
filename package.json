@@ -13,7 +13,17 @@
         "underscore": ">=1.4.4",
         "commander": ">=1.1.1"
     },
-    "engines": { "node": ">=0.6.12" },
+    "devDependencies": {
+        "grunt": "*",
+        "grunt-contrib-jshint": "*",
+        "grunt-contrib-compress": ">=0.5.2",
+        "grunt-mocha": "~0.4.1",
+        "grunt-mocha-test": "~0.7.0",
+        "mocha": "~1.14.0"
+    },
+    "engines": {
+        "node": ">=0.6.12"
+    },
     "bin" : {
         "jiko" : "jiko_cli.js"
     }

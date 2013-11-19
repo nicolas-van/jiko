@@ -24,6 +24,8 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 */
 
 (function() {
+/* jshint evil: true */
+"use strict";
 
 if (typeof(exports) !== "undefined") { // nodejs
     var underscore = require("underscore");
@@ -31,11 +33,11 @@ if (typeof(exports) !== "undefined") { // nodejs
 } else if (typeof(define) !== "undefined") { // amd
     define(["underscore"], declare);
 } else { // define global variable
-    jiko = declare(_);
+    window.jiko = declare(_);
 }
 
 
-function declare(_, is_node) {
+function declare(_, isNode) {
     var jiko = {};
 
     var escapes = {
@@ -47,13 +49,13 @@ function declare(_, is_node) {
         'u2028': '\u2028',
         'u2029': '\u2029'
     };
-    for (var p in escapes) escapes[escapes[p]] = p;
+    _.each(_.keys(escapes), function(p) { escapes[escapes[p]] = p; });
     var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
     var escape_ = function(text) {
         return "'" + text.replace(escaper, function(match) {
             return '\\' + escapes[match];
         }) + "'";
-    }
+    };
     var indent_ = function(txt) {
         var tmp = _.map(txt.split("\n"), function(x) { return "    " + x; });
         tmp.pop();
@@ -61,76 +63,78 @@ function declare(_, is_node) {
         return tmp.join("\n");
     };
     var _trim = function(t) {
-        return t.replace(/^\s+|\s+$/g, ''); 
+        return t.replace(/^\s+|\s+$/g, '');
     };
     var tparams = {
         block: /\{%\s*(\w+)(?:\s+(?:\w+)\s*=\s*(?:(?:"(?:.+?)")|(?:'(?:.+?)')))*\s*%\}/gm,
-        block_properties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/gm,
-        comment_multi_begin: /\{\*/gm,
-        comment_multi_end: /\*\}/gm,
-        eval_long_begin: /<%/gm,
-        eval_long_end: /%>/gm,
-        eval_short_begin: /^\\*[ \t]*%(?!{)/gm,
-        eval_short_end: /\n|$/gm,
-        escape_begin: /\${/gm,
-        interpolate_begin: /%{/gm,
-        comment_begin: /##/gm,
-        comment_end: /\n|$/gm,
+        blockProperties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/gm,
+        commentMultiBegin: /\{\*/gm,
+        commentMultiEnd: /\*\}/gm,
+        evalLongBegin: /<%/gm,
+        evalLongEnd: /%>/gm,
+        evalShortBegin: /^\\*[ \t]*%(?!{)/gm,
+        evalShortEnd: /\n|$/gm,
+        evalBegin: /\${/gm,
+        interpolateBegin: /%{/gm,
+        commentBegin: /##/gm,
+        commentEnd: /\n|$/gm,
         slashes: /\\*/gm,
-        slash_begin: /^\\*/g
+        slashBegin: /^\\*/g
     };
     var allbegin = new RegExp(
         "(" + tparams.slashes.source + ")(" +
         "(" + tparams.block.source + ")|" +
-        "(" + tparams.comment_multi_begin.source + ")|" +
-        "(" + tparams.eval_long_begin.source + ")|" +
-        "(" + tparams.interpolate_begin.source + ")|" +
-        "(" + tparams.eval_short_begin.source + ")|" +
-        "(" + tparams.escape_begin.source + ")|" +
-        "(" + tparams.comment_begin.source + ")" +
-        ")"
-    , "gm");
-    allbegin.global = true;
+        "(" + tparams.commentMultiBegin.source + ")|" +
+        "(" + tparams.evalLongBegin.source + ")|" +
+        "(" + tparams.interpolateBegin.source + ")|" +
+        "(" + tparams.evalShortBegin.source + ")|" +
+        "(" + tparams.evalBegin.source + ")|" +
+        "(" + tparams.commentBegin.source + ")" +
+        ")",
+        "gm");
     var regexes = {
         slashes: 1,
         match: 2,
         block: 3,
-        block_type: 4,
-        comment_multi_begin: 5,
-        eval_long: 6,
+        blockType: 4,
+        commentMultiBegin: 5,
+        evalLong: 6,
         interpolate: 7,
-        eval_short: 8,
+        evalShort: 8,
         escape: 9,
         comment: 10
     };
-    var regex_count = 4;
+    var regexCount = 4;
 
     var printDirectives = "var __p = '';\n" +
         "var print = function(t) { __p += t; };\n";
 
-    var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-        "var escape_function = function(s) {return ('' + (s == null ? '' : s)).replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
+    var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;" +
+        "','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
+        "var escape_function = function(s) {return ('' + (s == null ? '' : s))" +
+        ".replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
 
     var compile = function(text, options) {
+        /* jshint loopfunc: true */
         options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
-        start = options.start;
+        var start = options.start;
         var source = "";
         var current = start;
         allbegin.lastIndex = current;
-        var text_end = text.length;
-        var restart = end;
+        var textEnd = text.length;
+        var restart = textEnd;
         var found;
         var rmWhite = options.removeWhitespaces ? function(txt) {
             if (! txt)
                 return txt;
-            var tmp = _.chain(txt.split("\n")).map(function(x) { return _trim(x) })
-                .reject(function(x) { return !x }).value().join("\n");
+            var tmp = _.chain(txt.split("\n")).map(function(x) { return _trim(x); })
+                .reject(function(x) { return !x; }).value().join("\n");
             if (txt.charAt(0).match(/\s/) && ! tmp.charAt(0).match(/\s/))
                 tmp = txt.charAt(0) + tmp;
             if (txt.charAt(txt.length - 1).match(/\s/) && ! tmp.charAt(tmp.length - 1).match(/\s/))
                 tmp += txt.charAt(txt.length - 1);
             return tmp;
-        } : function(x) { return x };
+        } : function(x) { return x; };
         var appendPrint = ! options.fileMode ? function(t) {
             source += t ? "__p += " + t + ";\n" : '';
         }: function() {};
@@ -145,15 +149,16 @@ function declare(_, is_node) {
                 appendPrint(escape_(v));
             }
         };
-        while (found = allbegin.exec(text)) {
-            var to_add = rmWhite(text.slice(current, found.index));
-            escapePrint(to_add);
+        var end, braces, bCount, brace, toAdd;
+        while ((found = allbegin.exec(text))) {
+            toAdd = rmWhite(text.slice(current, found.index));
+            escapePrint(toAdd);
             current = found.index;
 
             // slash escaping handling
-            tparams.slash_begin.lastIndex = 0;
-            var find_slash = tparams.slash_begin.exec(found[0]);
-            var slashes = find_slash ? find_slash[0] : "";
+            tparams.slashBegin.lastIndex = 0;
+            var findSlash = tparams.slashBegin.exec(found[0]);
+            var slashes = findSlash ? findSlash[0] : "";
             var nbr = slashes.length;
             var nslash = slashes.slice(0, Math.floor(nbr / 2));
             escapePrint(nbr !== 0 ? nslash : null);
@@ -165,101 +170,100 @@ function declare(_, is_node) {
             }
 
             if (found[regexes.block]) {
-                var block_type = found[regexes.block_type];
-                var block_complete = found[regexes.block];
-                var block_args = {};
-                var block_parse;
-                while (block_parse = tparams.block_properties.exec(block_complete)) {
-                    block_args[block_parse[1]] = _.unescape(block_parse[2].slice(1, block_parse[2].length - 1));
+                var blockType = found[regexes.blockType];
+                var blockComplete = found[regexes.block];
+                var blockArgs = {};
+                var blockParse;
+                while ((blockParse = tparams.blockProperties.exec(blockComplete))) {
+                    blockArgs[blockParse[1]] = _.unescape(blockParse[2].slice(1, blockParse[2].length - 1));
                 }
-                if (block_type === "function") {
-                    var name = block_args["name"];
+                if (blockType === "function") {
+                    var name = blockArgs.name;
                     if (! name || ! name.match(/^\w+$/)) {
                         throw new Error("Function with invalid name");
                     }
-                    var sub_compile = compile(text, _.extend({}, options, {start: found.index + found[0].length, noEsc: true, fileMode: false}));
-                    source += "var " + name  + " = function(context) {\n" + indent_(sub_compile.source) + "};\n";
+                    var subCompile = compile(text, _.extend({}, options, {start: found.index + found[0].length,
+                        noEsc: true, fileMode: false}));
+                    source += "var " + name  + " = function(context) {\n" + indent_(subCompile.source) + "};\n";
                     if (options.fileMode) {
                         source += "exports." + name + " = " + name + ";\n";
                     }
-                    current = sub_compile.end;
-                } else if (block_type === "end") {
-                    text_end = found.index;
+                    current = subCompile.end;
+                } else if (blockType === "end") {
+                    textEnd = found.index;
                     restart = found.index + found[0].length;
                     break;
                 } else {
-                    throw new Error("Unknown block type: '" + block_type + "'");
+                    throw new Error("Unknown block type: '" + blockType + "'");
                 }
-            } else if (found[regexes.comment_multi_begin]) {
-                tparams.comment_multi_end.lastIndex = found.index + found[0].length;
-                var end = tparams.comment_multi_end.exec(text);
+            } else if (found[regexes.commentMultiBegin]) {
+                tparams.commentMultiEnd.lastIndex = found.index + found[0].length;
+                end = tparams.commentMultiEnd.exec(text);
                 if (!end)
                     throw new Error("{* without corresponding *}");
                 current = end.index + end[0].length;
-            } else if (found[regexes.eval_long]) {
-                tparams.eval_long_end.lastIndex = found.index + found[0].length;
-                var end = tparams.eval_long_end.exec(text);
+            } else if (found[regexes.evalLong]) {
+                tparams.evalLongEnd.lastIndex = found.index + found[0].length;
+                end = tparams.evalLongEnd.exec(text);
                 if (!end)
                     throw new Error("<% without matching %>");
                 var code = text.slice(found.index + found[0].length, end.index);
-                code = _(code.split("\n")).chain().map(function(x) { return _trim(x) })
-                    .reject(function(x) { return !x }).value().join("\n");
+                code = _(code.split("\n")).chain().map(function(x) { return _trim(x); })
+                    .reject(function(x) { return !x; }).value().join("\n");
                 source += code + "\n";
                 current = end.index + end[0].length;
             } else if (found[regexes.interpolate]) {
-                var braces = /{|}/g;
+                braces = /{|}/g;
                 braces.lastIndex = found.index + found[0].length;
-                var b_count = 1;
-                var brace;
-                while (brace = braces.exec(text)) {
+                bCount = 1;
+                while ((brace = braces.exec(text))) {
                     if (brace[0] === "{")
-                        b_count++;
+                        bCount++;
                     else {
-                        b_count--;
+                        bCount--;
                     }
-                    if (b_count === 0)
+                    if (bCount === 0)
                         break;
                 }
-                if (b_count !== 0)
+                if (bCount !== 0)
                     throw new Error("%{ without a matching }");
                 appendPrint(_trim(text.slice(found.index + found[0].length, brace.index)));
                 current = brace.index + brace[0].length;
-            } else if (found[regexes.eval_short]) {
-                tparams.eval_short_end.lastIndex = found.index + found[0].length;
-                var end = tparams.eval_short_end.exec(text);
+            } else if (found[regexes.evalShort]) {
+                tparams.evalShortEnd.lastIndex = found.index + found[0].length;
+                end = tparams.evalShortEnd.exec(text);
                 if (!end)
                     throw new Error("impossible state!!");
                 source += _trim(text.slice(found.index + found[0].length, end.index)) + "\n";
                 current = end.index + end[0].length;
             } else if (found[regexes.escape]) {
-                var braces = /{|}/g;
+                braces = /{|}/g;
                 braces.lastIndex = found.index + found[0].length;
-                var b_count = 1;
-                var brace;
-                while (brace = braces.exec(text)) {
+                bCount = 1;
+                while ((brace = braces.exec(text))) {
                     if (brace[0] === "{")
-                        b_count++;
+                        bCount++;
                     else {
-                        b_count--;
+                        bCount--;
                     }
-                    if (b_count === 0)
+                    if (bCount === 0)
                         break;
                 }
-                if (b_count !== 0)
+                if (bCount !== 0)
                     throw new Error("${ without a matching }");
                 appendPrint("escape_function(" + _trim(text.slice(found.index + found[0].length, brace.index)) + ")");
                 current = brace.index + brace[0].length;
             } else { // comment 
-                tparams.comment_end.lastIndex = found.index + found[0].length;
-                var end = tparams.comment_end.exec(text);
+                tparams.commentEnd.lastIndex = found.index + found[0].length;
+                end = tparams.commentEnd.exec(text);
                 if (!end)
                     throw new Error("impossible state!!");
                 current = end.index + end[0].length;
             }
             allbegin.lastIndex = current;
         }
-        var to_add = rmWhite(text.slice(current, text_end));
-        escapePrint(to_add );
+        toAdd = rmWhite(text.slice(current, textEnd));
+        escapePrint(toAdd);
 
         if (options.fileMode) {
             source = escapeDirectives + "var exports = {};\n" + source + "return exports;\n";
@@ -276,7 +280,7 @@ function declare(_, is_node) {
 
     jiko.loadFile = function(filename) {
         var result;
-        if (! is_node) {
+        if (! isNode) {
             var req = new XMLHttpRequest();
             req.open("GET", filename, false);
             req.send();
@@ -288,22 +292,22 @@ function declare(_, is_node) {
         return jiko.loadFileContent(result, {filename: filename});
     };
 
-    jiko.loadFileContent = function(file_content, options) {
+    jiko.loadFileContent = function(fileContent, options) {
         options = options || {};
-        var code = jiko.compileFile(file_content);
+        var code = jiko.compileFile(fileContent);
 
         var debug = options.filename ? "\n//@ sourceURL=" + options.filename : "";
 
         return new Function("return (" + code + ")();" + debug)();
     };
 
-    jiko.compileFile = function(file_content) {
-        var code = compile(file_content, {fileMode: true}).source;
+    jiko.compileFile = function(fileContent) {
+        var code = compile(fileContent, {fileMode: true}).source;
         code = "function() {\n" + indent_(code) + "}";
         return code;
     };
 
-    jiko.eval = function(text, context) {
+    jiko.evaluate = function(text, context) {
         return jiko.loadTemplate(text)(context);
     };
 
@@ -319,5 +323,5 @@ function declare(_, is_node) {
     };
 
     return jiko;
-};
+}
 })();
