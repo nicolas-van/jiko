@@ -40,7 +40,7 @@ if (typeof(exports) !== "undefined") { // nodejs
 function declare(_, isNode) {
     var jiko = {};
 
-    var escapes = {
+    var jsescapes = {
         '\\': '\\',
         "'": "'",
         'r': '\r',
@@ -49,11 +49,11 @@ function declare(_, isNode) {
         'u2028': '\u2028',
         'u2029': '\u2029'
     };
-    _.each(_.keys(escapes), function(p) { escapes[escapes[p]] = p; });
-    var escaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
-    var escape_ = function(text) {
-        return "'" + text.replace(escaper, function(match) {
-            return '\\' + escapes[match];
+    _.each(_.keys(jsescapes), function(p) { jsescapes[jsescapes[p]] = p; });
+    var jsescaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+    var jsescape = function(text) {
+        return "'" + text.replace(jsescaper, function(match) {
+            return '\\' + jsescapes[match];
         }) + "'";
     };
     var indent_ = function(txt) {
@@ -286,7 +286,7 @@ function declare(_, isNode) {
                     v += "\n";
                 else if (! v)
                     continue;
-                appendPrint(escape_(v));
+                appendPrint(jsescape(v));
             }
         };
         var current = start;
