@@ -106,6 +106,150 @@ function declare(_, isNode) {
     };
     var regexCount = 4;
 
+    /*
+        tokens:
+            text
+            block
+            multiComment
+            evalLong
+            interpolate
+            evalShort
+            escape
+            comment
+    */
+
+    var lexer = function(text) {
+        var start = 0;
+        var current = start;
+        allbegin.lastIndex = current;
+        var textEnd = text.length;
+        var found;
+        var tokens = [];
+        var end, braces, bCount, brace;
+        while ((found = allbegin.exec(text))) {
+            tokens.push({type: "text", value: text.slice(current, found.index)});
+            tokens[tokens.length - 1].text = tokens[tokens.length - 1].value;
+            current = found.index;
+
+            // slash escaping handling
+            tparams.slashBegin.lastIndex = 0;
+            var findSlash = tparams.slashBegin.exec(found[0]);
+            var slashes = findSlash ? findSlash[0] : "";
+            var nbr = slashes.length;
+            if (nbr !== 0) {
+                var nslash = slashes.slice(0, Math.floor(nbr / 2) * 2);
+                tokens.push({type: "text", value: nslash.slice(0, nslash.length / 2), text: nslash});
+            }
+            if (nbr % 2 !== 0) {
+                tokens.push({type: "text", value: found[0].slice(slashes.length)});
+                tokens[tokens.length - 1].text = "\\" + tokens[tokens.length - 1].value;
+                current = found.index + found[0].length;
+                allbegin.lastIndex = current;
+                continue;
+            }
+
+            if (found[regexes.block]) {
+                var blockType = found[regexes.blockType];
+                var blockComplete = found[regexes.block];
+                var blockArgs = {};
+                var blockParse;
+                while ((blockParse = tparams.blockProperties.exec(blockComplete))) {
+                    blockArgs[blockParse[1]] = _.unescape(blockParse[2].slice(1, blockParse[2].length - 1));
+                }
+                tokens.push({type: "block", value: {
+                    type: blockType,
+                    args: blockArgs
+                }, text: found[0]});
+                current = found.index + found[0].length;
+            } else if (found[regexes.commentMultiBegin]) {
+                tparams.commentMultiEnd.lastIndex = found.index + found[0].length;
+                end = tparams.commentMultiEnd.exec(text);
+                if (!end)
+                    throw new Error("{* without corresponding *}");
+                tokens.push({type: "multiComment",
+                    value: text.slice(found.index + found[0].length, end.index),
+                    text: text.slice(found.index, end.index + end[0].length)
+                });
+                current = end.index + end[0].length;
+            } else if (found[regexes.evalLong]) {
+                tparams.evalLongEnd.lastIndex = found.index + found[0].length;
+                end = tparams.evalLongEnd.exec(text);
+                if (!end)
+                    throw new Error("<% without matching %>");
+                tokens.push({type: "evalLong",
+                    value: text.slice(found.index + found[0].length, end.index),
+                    text: text.slice(found.index, end.index + end[0].length)
+                });
+                current = end.index + end[0].length;
+            } else if (found[regexes.interpolate]) {
+                braces = /{|}/g;
+                braces.lastIndex = found.index + found[0].length;
+                bCount = 1;
+                while ((brace = braces.exec(text))) {
+                    if (brace[0] === "{")
+                        bCount++;
+                    else {
+                        bCount--;
+                    }
+                    if (bCount === 0)
+                        break;
+                }
+                if (bCount !== 0)
+                    throw new Error("%{ without a matching }");
+                tokens.push({type: "interpolate",
+                    value: text.slice(found.index + found[0].length, brace.index),
+                    text: text.slice(found.index, brace.index + brace[0].length)
+                });
+                current = brace.index + brace[0].length;
+            } else if (found[regexes.evalShort]) {
+                tparams.evalShortEnd.lastIndex = found.index + found[0].length;
+                end = tparams.evalShortEnd.exec(text);
+                if (!end)
+                    throw new Error("impossible state!!");
+                tokens.push({type: "evalShort",
+                    value: text.slice(found.index + found[0].length, end.index),
+                    text: text.slice(found.index, end.index + end[0].length)
+                });
+                current = end.index + end[0].length;
+            } else if (found[regexes.escape]) {
+                braces = /{|}/g;
+                braces.lastIndex = found.index + found[0].length;
+                bCount = 1;
+                while ((brace = braces.exec(text))) {
+                    if (brace[0] === "{")
+                        bCount++;
+                    else {
+                        bCount--;
+                    }
+                    if (bCount === 0)
+                        break;
+                }
+                if (bCount !== 0)
+                    throw new Error("${ without a matching }");
+                tokens.push({type: "escape",
+                    value: text.slice(found.index + found[0].length, brace.index),
+                    text: text.slice(found.index, brace.index + brace[0].length)
+                });
+                current = brace.index + brace[0].length;
+            } else { // comment 
+                tparams.commentEnd.lastIndex = found.index + found[0].length;
+                end = tparams.commentEnd.exec(text);
+                if (!end)
+                    throw new Error("impossible state!!");
+                tokens.push({type: "comment",
+                    value: text.slice(found.index + found[0].length, end.index),
+                    text: text.slice(found.index, end.index + end[0].length)
+                });
+                current = end.index + end[0].length;
+            }
+            allbegin.lastIndex = current;
+        }
+        tokens.push({type: "text", value: text.slice(current, textEnd)});
+        tokens[tokens.length - 1].text = tokens[tokens.length - 1].value;
+
+        return tokens;
+    };
+
     var printDirectives = "var __p = '';\n" +
         "var print = function(t) { __p += t; };\n";
 
@@ -114,16 +258,12 @@ function declare(_, isNode) {
         "var escape_function = function(s) {return ('' + (s == null ? '' : s))" +
         ".replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
 
-    var compile = function(text, options) {
+    var compile = function(tokens, options) {
         /* jshint loopfunc: true */
         options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
         var start = options.start;
         var source = "";
-        var current = start;
-        allbegin.lastIndex = current;
-        var textEnd = text.length;
-        var restart = textEnd;
-        var found;
+        var restart = tokens.length;
         var rmWhite = options.removeWhitespaces ? function(txt) {
             if (! txt)
                 return txt;
@@ -149,121 +289,59 @@ function declare(_, isNode) {
                 appendPrint(escape_(v));
             }
         };
-        var end, braces, bCount, brace, toAdd;
-        while ((found = allbegin.exec(text))) {
-            toAdd = rmWhite(text.slice(current, found.index));
-            escapePrint(toAdd);
-            current = found.index;
+        var current = start;
+        var stop = false;
+        while (current < tokens.length && ! stop) {
+            var token = tokens[current];
+            var value = token.value;
 
-            // slash escaping handling
-            tparams.slashBegin.lastIndex = 0;
-            var findSlash = tparams.slashBegin.exec(found[0]);
-            var slashes = findSlash ? findSlash[0] : "";
-            var nbr = slashes.length;
-            var nslash = slashes.slice(0, Math.floor(nbr / 2));
-            escapePrint(nbr !== 0 ? nslash : null);
-            if (nbr % 2 !== 0) {
-                escapePrint(found[0].slice(slashes.length));
-                current = found.index + found[0].length;
-                allbegin.lastIndex = current;
-                continue;
-            }
-
-            if (found[regexes.block]) {
-                var blockType = found[regexes.blockType];
-                var blockComplete = found[regexes.block];
-                var blockArgs = {};
-                var blockParse;
-                while ((blockParse = tparams.blockProperties.exec(blockComplete))) {
-                    blockArgs[blockParse[1]] = _.unescape(blockParse[2].slice(1, blockParse[2].length - 1));
-                }
-                if (blockType === "function") {
-                    var name = blockArgs.name;
+            switch (token.type) {
+                case "text":
+                escapePrint(value);
+                break;
+                case "block":
+                if (value.type === "function") {
+                    var name = value.args.name;
                     if (! name || ! name.match(/^\w+$/)) {
                         throw new Error("Function with invalid name");
                     }
-                    var subCompile = compile(text, _.extend({}, options, {start: found.index + found[0].length,
+                    var subCompile = compile(tokens, _.extend({}, options, {start: current + 1,
                         noEsc: true, fileMode: false}));
                     source += "var " + name  + " = function(context) {\n" + indent_(subCompile.source) + "};\n";
                     if (options.fileMode) {
                         source += "exports." + name + " = " + name + ";\n";
                     }
-                    current = subCompile.end;
-                } else if (blockType === "end") {
-                    textEnd = found.index;
-                    restart = found.index + found[0].length;
-                    break;
+                    current = subCompile.end - 1;
+                } else if (value.type === "end") {
+                    restart = current + 1;
+                    stop = true;
                 } else {
-                    throw new Error("Unknown block type: '" + blockType + "'");
+                    throw new Error("Unknown block type: '" + value.type + "'");
                 }
-            } else if (found[regexes.commentMultiBegin]) {
-                tparams.commentMultiEnd.lastIndex = found.index + found[0].length;
-                end = tparams.commentMultiEnd.exec(text);
-                if (!end)
-                    throw new Error("{* without corresponding *}");
-                current = end.index + end[0].length;
-            } else if (found[regexes.evalLong]) {
-                tparams.evalLongEnd.lastIndex = found.index + found[0].length;
-                end = tparams.evalLongEnd.exec(text);
-                if (!end)
-                    throw new Error("<% without matching %>");
-                var code = text.slice(found.index + found[0].length, end.index);
-                code = _(code.split("\n")).chain().map(function(x) { return _trim(x); })
+                break;
+                case "multiComment":
+                break;
+                case "comment":
+                break;
+                case "evalLong":
+                var code = _(value.split("\n")).chain().map(function(x) { return _trim(x); })
                     .reject(function(x) { return !x; }).value().join("\n");
                 source += code + "\n";
-                current = end.index + end[0].length;
-            } else if (found[regexes.interpolate]) {
-                braces = /{|}/g;
-                braces.lastIndex = found.index + found[0].length;
-                bCount = 1;
-                while ((brace = braces.exec(text))) {
-                    if (brace[0] === "{")
-                        bCount++;
-                    else {
-                        bCount--;
-                    }
-                    if (bCount === 0)
-                        break;
-                }
-                if (bCount !== 0)
-                    throw new Error("%{ without a matching }");
-                appendPrint(_trim(text.slice(found.index + found[0].length, brace.index)));
-                current = brace.index + brace[0].length;
-            } else if (found[regexes.evalShort]) {
-                tparams.evalShortEnd.lastIndex = found.index + found[0].length;
-                end = tparams.evalShortEnd.exec(text);
-                if (!end)
-                    throw new Error("impossible state!!");
-                source += _trim(text.slice(found.index + found[0].length, end.index)) + "\n";
-                current = end.index + end[0].length;
-            } else if (found[regexes.escape]) {
-                braces = /{|}/g;
-                braces.lastIndex = found.index + found[0].length;
-                bCount = 1;
-                while ((brace = braces.exec(text))) {
-                    if (brace[0] === "{")
-                        bCount++;
-                    else {
-                        bCount--;
-                    }
-                    if (bCount === 0)
-                        break;
-                }
-                if (bCount !== 0)
-                    throw new Error("${ without a matching }");
-                appendPrint("escape_function(" + _trim(text.slice(found.index + found[0].length, brace.index)) + ")");
-                current = brace.index + brace[0].length;
-            } else { // comment 
-                tparams.commentEnd.lastIndex = found.index + found[0].length;
-                end = tparams.commentEnd.exec(text);
-                if (!end)
-                    throw new Error("impossible state!!");
-                current = end.index + end[0].length;
+                break;
+                case "interpolate":
+                appendPrint(_trim(value));
+                break;
+                case "evalShort":
+                source += _trim(value) + "\n";
+                break;
+                case "escape":
+                appendPrint("escape_function(" + _trim(value) + ")");
+                break;
+                default:
+                throw new Error("Unrecognized token");
             }
-            allbegin.lastIndex = current;
+            current += 1;
         }
-        toAdd = rmWhite(text.slice(current, textEnd));
-        escapePrint(toAdd);
 
         if (options.fileMode) {
             source = escapeDirectives + "var exports = {};\n" + source + "return exports;\n";
@@ -302,7 +380,8 @@ function declare(_, isNode) {
     };
 
     jiko.compileFile = function(fileContent) {
-        var code = compile(fileContent, {fileMode: true}).source;
+        var tokens = lexer(fileContent);
+        var code = compile(tokens, {fileMode: true}).source;
         code = "function() {\n" + indent_(code) + "}";
         return code;
     };
@@ -317,7 +396,8 @@ function declare(_, isNode) {
     };
 
     jiko.compileTemplate = function(text) {
-        var code = compile(text).source;
+        var tokens = lexer(text);
+        var code = compile(tokens).source;
         code = "function(context) {\n" + indent_(code) + "}";
         return code;
     };
