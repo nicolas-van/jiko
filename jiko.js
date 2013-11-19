@@ -51,20 +51,25 @@ function declare(_, isNode) {
     };
     _.each(_.keys(jsescapes), function(p) { jsescapes[jsescapes[p]] = p; });
     var jsescaper = /\\|'|\r|\n|\t|\u2028|\u2029/g;
+    // escape strings to javascript valid strings
     var jsescape = function(text) {
         return "'" + text.replace(jsescaper, function(match) {
             return '\\' + jsescapes[match];
         }) + "'";
     };
+    // indent all the lines of a string
     var indent_ = function(txt) {
         var tmp = _.map(txt.split("\n"), function(x) { return "    " + x; });
         tmp.pop();
         tmp.push("");
         return tmp.join("\n");
     };
+    // like str.trim() but works in all browsers
     var _trim = function(t) {
         return t.replace(/^\s+|\s+$/g, '');
     };
+
+    // lot of regexes for the lexer
     var tparams = {
         block: /\{%\s*(\w+)(?:\s+(?:\w+)\s*=\s*(?:(?:"(?:.+?)")|(?:'(?:.+?)')))*\s*%\}/gm,
         blockProperties: /(\w+)\s*=\s*((?:"(?:.+?)")|(?:'(?:.+?)'))/gm,
