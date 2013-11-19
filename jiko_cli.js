@@ -1,4 +1,5 @@
 #! /usr/bin/env node
+"use strict";
 
 var _ = require('underscore');
 var jiko = require('./jiko');
@@ -11,12 +12,12 @@ program.version('0.7.0');
 
 var _trim = function(t) {
     return t.trim();
-}
+};
 var namespaceFromFileName = function(filename) {
     var namespace = filename.split("/");
     namespace = namespace[namespace.length -1];
     namespace = namespace.split(".");
-    namespace = _.filter(_.map(namespace, function(x) {return _trim(x)}), function(x) {return x !== ""});
+    namespace = _.filter(_.map(namespace, function(x) {return _trim(x);}), function(x) {return x !== "";});
     if (namespace.length > 1) {
         namespace = _.first(namespace, namespace.length - 1);
     }
@@ -45,8 +46,8 @@ compile.description('Compile a Jiko template file to a javascript file.')
         if (compile.output) {
             console.log(compiled);
         } else {
-            var n_name = path.join(path.dirname(filename), namespace + ".js");
-            fs.writeFileSync(n_name, compiled, "utf8");
+            var nName = path.join(path.dirname(filename), namespace + ".js");
+            fs.writeFileSync(nName, compiled, "utf8");
         }
     });
 

@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['jiko.js', 'test.js'],
+            files: ['jiko.js', 'test.js', 'jiko_cli.js'],
             options: {
                 es3: true, // ie 7 compatibility
                 eqeqeq: true, // no == or !=
