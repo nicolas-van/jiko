@@ -265,7 +265,7 @@ function declare(_, isNode) {
 
     var compile = function(tokens, options) {
         /* jshint loopfunc: true */
-        options = _.extend({start: 0, noEsc: false, fileMode: false, removeWhitespaces: true}, options);
+        options = _.extend({start: 0, noEsc: false, removeWhitespaces: true}, options);
         var start = options.start;
         var source = "";
         var restart = tokens.length;
@@ -280,9 +280,9 @@ function declare(_, isNode) {
                 tmp += txt.charAt(txt.length - 1);
             return tmp;
         } : function(x) { return x; };
-        var appendPrint = ! options.fileMode ? function(t) {
+        var appendPrint = function(t) {
             source += t ? "__p += " + t + ";\n" : '';
-        }: function() {};
+        };
         var escapePrint = function(t) {
             t = (t || '').split("\n");
             for(var i = 0; i < t.length; i++) {
@@ -294,26 +294,59 @@ function declare(_, isNode) {
                 appendPrint(jsescape(v));
             }
         };
+        var isModule = false;
+        var checkValidity = function(token) {
+            if (! isModule)
+                return;
+            switch (token.type) {
+                case "text":
+                var res = /[^\s]/.exec(token.value);
+                if (res) {
+                    throw new Error("Invalid character inside a module: " + res[0]);
+                }
+                break;
+                case "comment":
+                break;
+                case "multiComment":
+                break;
+                case "evalLong":
+                break;
+                case "evalShort":
+                break;
+                case "block":
+                break; // may be more complex in the future
+                default:
+                throw new Error("Invalid token inside a module:" + token.text);
+            }
+        };
         var current = start;
         var stop = false;
+        var acceptedTokens = [];
         while (current < tokens.length && ! stop) {
             var token = tokens[current];
             var value = token.value;
+            checkValidity(token);
 
             switch (token.type) {
                 case "text":
-                escapePrint(value);
+                if (! isModule)
+                    escapePrint(value);
                 break;
                 case "block":
-                if (value.type === "function") {
+                if (value.type === "module") {
+                    _.each(acceptedTokens, function(t) {
+                        checkValidity(t);
+                    });
+                    isModule = true;
+                } else if (value.type === "function") {
                     var name = value.args.name;
                     if (! name || ! name.match(/^\w+$/)) {
                         throw new Error("Function with invalid name");
                     }
                     var subCompile = compile(tokens, _.extend({}, options, {start: current + 1,
-                        noEsc: true, fileMode: false}));
-                    source += "var " + name  + " = function(context) {\n" + indent_(subCompile.source) + "};\n";
-                    if (options.fileMode) {
+                        noEsc: true}));
+                    source += "var " + name  + " = " + subCompile.source + ";\n";
+                    if (isModule) {
                         source += "exports." + name + " = " + name + ";\n";
                     }
                     current = subCompile.end - 1;
@@ -345,20 +378,45 @@ function declare(_, isNode) {
                 default:
                 throw new Error("Unrecognized token");
             }
+            acceptedTokens.push(token);
             current += 1;
         }
 
-        if (options.fileMode) {
-            source = escapeDirectives + "var exports = {};\n" + source + "return exports;\n";
+        if (isModule) {
+            source = "var exports = {};\n" + source + "return exports;\n";
         } else {
-            source = (options.noEsc ? '' : escapeDirectives) + printDirectives +
-                "with (context || {}) {\n" + indent_(source) + "}\nreturn __p;\n";
+            source = printDirectives + "with (context || {}) {\n" + indent_(source) + "}\nreturn __p;\n";
+        }
+        source = (options.noEsc ? '' : escapeDirectives) + source;
+        if (isModule) {
+            source = "(function() {\n" + indent_(source) + "})()";
+        } else {
+            source = "function(context) {\n" + indent_(source) + "}";
         }
 
         return {
             source: source,
             end: restart
         };
+    };
+
+    jiko.compile = function(content) {
+        var tokens = lexer(content);
+        var compiled = compile(tokens);
+        return compiled.source;
+    };
+
+    jiko.loadTemplate = function(text, options) {
+        options = options || {};
+        var code = jiko.compile(text);
+
+        var debug = options.filename ? "\n//@ sourceURL=" + options.filename + "\n" : "";
+
+        return new Function("return " + code + ";" + debug)();
+    };
+
+    jiko.evaluate = function(text, context) {
+        return jiko.loadTemplate(text)(context);
     };
 
     jiko.loadFile = function(filename) {
@@ -372,39 +430,7 @@ function declare(_, isNode) {
             var fs = require("fs");
             result = fs.readFileSync(filename, "utf8");
         }
-        return jiko.loadFileContent(result, {filename: filename});
-    };
-
-    jiko.loadFileContent = function(fileContent, options) {
-        options = options || {};
-        var code = jiko.compileFile(fileContent);
-
-        var debug = options.filename ? "\n//@ sourceURL=" + options.filename : "";
-
-        return new Function("return (" + code + ")();" + debug)();
-    };
-
-    jiko.compileFile = function(fileContent) {
-        var tokens = lexer(fileContent);
-        var code = compile(tokens, {fileMode: true}).source;
-        code = "function() {\n" + indent_(code) + "}";
-        return code;
-    };
-
-    jiko.evaluate = function(text, context) {
-        return jiko.loadTemplate(text)(context);
-    };
-
-    jiko.loadTemplate = function(text) {
-        var code = jiko.compileTemplate(text);
-        return new Function("return (" + code + ");")();
-    };
-
-    jiko.compileTemplate = function(text) {
-        var tokens = lexer(text);
-        var code = compile(tokens).source;
-        code = "function(context) {\n" + indent_(code) + "}";
-        return code;
+        return jiko.loadTemplate(result, {filename: filename});
     };
 
     return jiko;

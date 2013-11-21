@@ -32,7 +32,7 @@ compile.description('Compile a Jiko template file to a javascript file.')
     .action(function(filename, env){
         var content = fs.readFileSync(filename, "utf8");
         var namespace = namespaceFromFileName(filename);
-        var compiled = jiko.compileFile(content);
+        var compiled = jiko.compile(content);
         compiled = "(function() {\n" +
             "var declare = " + compiled + ";\n" +
             "if (typeof(define) !== 'undefined') {\n" +
