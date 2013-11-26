@@ -5,7 +5,7 @@
 
 <%inherit file="/site_base.mako"/>
 
-<%namespace name="macros" file="/common/macros.mako"/>
+<%namespace name="macros" file="/macros.mako"/>
 
 {% set hideSideContent = True %}
 {% import 'macros.j2' as macros %}
@@ -24,14 +24,14 @@
     ${macros.navigation()}
 </div>
 
-<%macros:markdown>
+<%text filter="markdown">
 
 Jiko is a modern and easy to use template engine for Javascript. Its objective
 is to provide to Javascript programmers a way to write templates with an
 engine as powerful as server-side state of the art template engines like
 Jinja2 and Mako.
 
-<%text>
+    ::html
     <%
         var array = _.range(1, 11);
     %>
@@ -40,7 +40,6 @@ Jinja2 and Mako.
         <div>Hello world ${el} times!</div>
         % });
     </div>
-</%text>
 
 Jiko's features:
 
@@ -55,6 +54,6 @@ Jiko's features:
 
 Interested? Take a look at the [Quick Start](/docs/quickstart.html).
 
-</%macros:markdown>
+</%text>
 
 </%block>

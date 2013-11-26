@@ -1,0 +1,51 @@
+@import url(http://fonts.googleapis.com/css?family=Quando);
+.progdesign .leftLogo {
+  text-align: center;
+}
+.progdesign .leftLogo > img {
+  width: 150px;
+}
+.progdesign .frontPageHeader {
+  display: table;
+  height: 300px;
+  margin: 0 auto -20px auto;
+}
+.progdesign .frontPageHeader > img {
+  display: table-cell;
+  width: 300px;
+  float: left;
+}
+.progdesign .frontPageHeader > div {
+  display: table-cell;
+  vertical-align: middle;
+  padding-left: 50px;
+  font-family: "Quando";
+}
+.progdesign .frontPageHeader > div > h1 {
+  font-size: 100px;
+  margin-bottom: 15px;
+}
+.progdesign .frontPageHeader > div > h2 {
+  font-size: 20px;
+}
+.progdesign .sidePageHeader {
+  height: 300px;
+}
+.progdesign .sidePageHeader > div {
+  font-family: "Quando";
+}
+.progdesign .sidePageHeader > div > h1 {
+  font-size: 40px;
+  margin: 0 30px;
+}
+.progdesign .sidePageHeader > div > h2 {
+  font-size: 15px;
+  margin: 0 30px;
+}
+.progdesign .horizontalMenu {
+  text-align: center;
+}
+.progdesign .horizontalMenu > a {
+  font-style: italic;
+  padding: 0 10px;
+}

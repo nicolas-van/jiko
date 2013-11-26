@@ -3,6 +3,7 @@
 
 <html class="progdesign">
 <head>
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Jiko - Documentation</title>
     <meta name="description" content="Jiko - Documentation">
@@ -11,18 +12,22 @@
     
     <link rel="shortcut icon" href="/static/img/favicon.ico">
 
-    <link rel="stylesheet/less" type="text/css" href="/common/static/css/base_style.less" />
+    <link rel="stylesheet" type="text/css" href="/common/static/css/base_style.css" />
     
     <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
 
-    <script src="/common/static/js/less.js" type="text/javascript"></script>
 </head>
-</body>
+<body>
 
-    <div class="mainHorizontalTable">
-        <div class="contentRow">
-            <div class="contentTable">
-                <div class="leftAreaCell">
+    
+    
+
+    <div class="wrap">
+
+        <div class="container ">
+
+            <div class="row">
+                <div class="leftAreaCell col-md-3">
                     
 
 <div class="sidePageHeader">
@@ -35,26 +40,29 @@
 
 
                 </div>
-                <div class="rightAreaCell">
+                <div class="rightAreaCell col-md-9">
                     
                     
                     
-
 <h1>Documentation</h1>
 <p>This is where the docs will be.</p>
 
-
                 </div>
             </div>
+
         </div>
-        <div class="footerRow">
-            <div class="footerCell">
-                Copyright 2013, Nicolas Vanhoren
-            </div>
-        </div>
+
     </div>
 
-  <!--[if lt IE 8]>
+    <footer class="footerRow">
+        Copyright © 2013 <a href="https://github.com/nicolas-van">Nicolas Vanhoren</a><br />
+        All Rights Reserved
+    </footer>
+
+    
+    
+
+    <!--[if lt IE 8]>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
     <script>
         // You may want to place these lines inside an onload handler
@@ -62,6 +70,6 @@
         mode: "overlay"
         });
     </script>
-  <![endif]-->
+    <![endif]-->
 </body>
 </html>

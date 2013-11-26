@@ -3,6 +3,7 @@
 
 <html class="progdesign">
 <head>
+    <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
     <title>Jiko - Template Engine for Javascript</title>
     <meta name="description" content="Jiko - Template Engine for Javascript">
@@ -11,18 +12,22 @@
     
     <link rel="shortcut icon" href="/static/img/favicon.ico">
 
-    <link rel="stylesheet/less" type="text/css" href="/common/static/css/base_style.less" />
+    <link rel="stylesheet" type="text/css" href="/common/static/css/base_style.css" />
     
     <link rel="stylesheet/less" type="text/css" href="/static/css/style.less" />
 
-    <script src="/common/static/js/less.js" type="text/javascript"></script>
 </head>
-</body>
+<body>
 
-    <div class="mainHorizontalTable">
-        <div class="contentRow">
-            <div class="contentTable">
-                <div class="rightAreaCell">
+    
+    
+
+    <div class="wrap">
+
+        <div class="container noMenu">
+
+            <div class="row">
+                <div class="rightAreaCell col-md-12">
                     
                     
                     
@@ -42,12 +47,12 @@
 
 </div>
 
-
 <p>Jiko is a modern and easy to use template engine for Javascript. Its objective
 is to provide to Javascript programmers a way to write templates with an
 engine as powerful as server-side state of the art template engines like
 Jinja2 and Mako.</p>
-<pre><code>&lt;%
+<pre><code>::html
+&lt;%
     var array = _.range(1, 11);
 %&gt;
 &lt;div&gt;
@@ -70,18 +75,22 @@ Jinja2 and Mako.</p>
 <p>Interested? Take a look at the <a href="/docs/quickstart.html">Quick Start</a>.</p>
 
 
-
                 </div>
             </div>
+
         </div>
-        <div class="footerRow">
-            <div class="footerCell">
-                Copyright 2013, Nicolas Vanhoren
-            </div>
-        </div>
+
     </div>
 
-  <!--[if lt IE 8]>
+    <footer class="footerRow">
+        Copyright © 2013 <a href="https://github.com/nicolas-van">Nicolas Vanhoren</a><br />
+        All Rights Reserved
+    </footer>
+
+    
+    
+
+    <!--[if lt IE 8]>
     <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js"></script>
     <script>
         // You may want to place these lines inside an onload handler
@@ -89,6 +98,6 @@ Jinja2 and Mako.</p>
         mode: "overlay"
         });
     </script>
-  <![endif]-->
+    <![endif]-->
 </body>
 </html>
