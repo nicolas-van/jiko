@@ -1,9 +1,10 @@
 {
     "name": "jiko",
-    "version": "0.7.0",
+    "version": "0.8.0",
     "description": "Jiko Template Engine",
     "main": "jiko.js",
     "author": "Nicolas Vanhoren",
+    "homepage": "http://jiko.neoname.eu",
     "keywords": ["jiko", "template", "engine"],
     "repository" : {
         "type": "git",

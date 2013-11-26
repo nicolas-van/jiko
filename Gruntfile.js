@@ -44,7 +44,7 @@ module.exports = function(grunt) {
                 files: [
                     {src: 'jiko.js', dest: '.'},
                     {expand: true, flatten: true, src: 'bower_components/underscore/underscore.js', dest: '.'},
-                    {src: 'README', dest: '.'},
+                    {src: 'README.md', dest: '.'},
                     {src: 'package.json', dest: '.'},
                 ],
             }
