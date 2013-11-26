@@ -1,5 +1,5 @@
 /*
-Jiko version 0.7
+Jiko
 
 Copyright (c) 2013, Nicolas Vanhoren
 
