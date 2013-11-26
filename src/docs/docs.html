@@ -1,12 +1,13 @@
 <%!
     title = "Jiko - Documentation"
     description = "Documentation of the Jiko Template Engine"
+    import mypygreen
 %>
 
 <%inherit file="/common.mako"/>
 
 <%block name="mainContent">
-<%text filter="markdown">
+<%text filter="mypygreen.markdown">
 
 # Documentation
 

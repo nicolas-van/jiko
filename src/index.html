@@ -2,6 +2,7 @@
     title = "Jiko - Full Featured Template Engine for JavaScript"
     description = "Home Page of the Jiko Template Engine"
     sideContent = False
+    import mypygreen
 %>
 
 <%inherit file="/common.mako"/>
@@ -27,14 +28,14 @@
     ${macros.navigation()}
 </div>
 
-<%text filter="markdown">
+<%text filter="mypygreen.markdown">
 
 Jiko is a modern and easy to use template engine for Javascript. Its objective
 is to provide to Javascript programmers a way to write templates with an
 engine as powerful as server-side state of the art template engines like
 Jinja2 and Mako.
 
-    ::html
+    :::html+mako
     <%
         var array = _.range(1, 11);
     %>
