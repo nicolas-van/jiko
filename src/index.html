@@ -1,22 +1,25 @@
 <%!
-    title = "Jiko - Template Engine for Javascript"
+    title = "Jiko - Full Featured Template Engine for JavaScript"
     description = "Home Page of the Jiko Template Engine"
+    sideContent = False
 %>
 
-<%inherit file="/site_base.mako"/>
+<%inherit file="/common.mako"/>
 
 <%namespace name="macros" file="/macros.mako"/>
 
-{% set hideSideContent = True %}
-{% import 'macros.j2' as macros %}
-
 <%block name="mainContent">
 
-<div class="frontPageHeader">
-    <img src="/static/img/horse_300.png"/>
-    <div>
+<div class="jikoHeader row">
+    <div class="jikoMainLogo col-md-5">
+        <img src="/static/img/horse_200.png"/>
+    </div>
+    <div class="col-md-7">
         <h1>Jiko</h1>
-        <h2>Template engine for Javascript</h2>
+        <h5>Full Featured Template Engine for JavaScript</h5>
+        <div class="horizontalSocialNetwork">
+            ${macros.social()}
+        </div>
     </div>
 </div>
 
