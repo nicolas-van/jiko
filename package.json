@@ -25,7 +25,9 @@
     "grunt-mocha": "~0.4.1",
     "grunt-mocha-test": "~0.7.0",
     "mocha": "~1.14.0",
-    "execSync": "~1.0.1-pre"
+    "execSync": "~1.0.1-pre",
+    "grunt-shell": "~0.6.1",
+    "grunt-contrib-clean": "~0.5.0"
   },
   "engines": {
     "node": ">=0.6.12"

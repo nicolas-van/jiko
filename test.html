@@ -5,6 +5,8 @@
   <link rel="stylesheet" href="bower_components/mocha/mocha.css" />
     <script type="text/javascript" src="bower_components/underscore/underscore.js"></script>
     <script type="text/javascript" src="jiko.js"></script>
+    <script src="test_templates/exfunction.js"></script>
+    <script src="test_templates/exmodule.js"></script>
 </head>
 <body>
     <div id="mocha"></div>
@@ -15,6 +17,7 @@
         mocha.setup("bdd");
     </script>
     <script src="test.js"></script>
+    <script src="test_server_compilation.js"></script>
     <script>
         if (navigator.userAgent.indexOf('PhantomJS') < 0) {
             mocha.run();

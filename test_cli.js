@@ -1,4 +1,6 @@
 
+// only runs in node
+
 (function() {
 "use strict";
 

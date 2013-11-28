@@ -35,6 +35,19 @@ module.exports = function(grunt) {
                 }
             }
         },
+        shell: {
+            compileTest1: {
+                command: "./jiko_cli.js compile ./test_templates/exfunction.html",
+            },
+            compileTest2: {
+                command: "./jiko_cli.js compile ./test_templates/exmodule.html",
+            },
+        },
+        clean: {
+            tests: {
+                src: ["test_templates/*.js"],
+            }
+        },
         compress: {
             main: {
                 options: {
@@ -47,15 +60,20 @@ module.exports = function(grunt) {
                     {src: 'package.json', dest: '.'},
                 ],
             }
-        }
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-shell');
 
-    grunt.registerTask('test', ['jshint', "mocha", "mochaTest"]);
+    grunt.registerTask("nodeTest", ["mochaTest"]);
+    grunt.registerTask("compileTests", ["shell:compileTest1", "shell:compileTest2"]);
+    grunt.registerTask("browserTest", ["compileTests", "mocha", "clean:tests"]);
+    grunt.registerTask('test', ['jshint', "nodeTest", "browserTest"]);
 
     grunt.registerTask('dist', ['compress']);
 
