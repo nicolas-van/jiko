@@ -182,9 +182,9 @@ translated to real JavaScript functions that can be called like any other templa
 </pre></div>
 
 
-<p><code>{% function %}</code> constructs must have a <code>name</code> parameter specifying the name of the template function. They end with
-a <code>{% end %}</code>. Here we use the <code>%{}</code> construct instead of <code>${}</code> because when we call the <code>renderDate</code> template it
-already returns valid HTML, so we don't have to escape it.</p>
+<p><code>{% function %}</code> constructs must have a <code>name</code> parameter specifying the name of the template function. They end with a
+<code>{% end %}</code> construct. Here we use the <code>%{}</code> construct instead of <code>${}</code> because when we call the <code>renderDate</code> template
+it already returns valid HTML, so we don't have to escape it.</p>
 <h2 id="modules">Modules</h2>
 <p>To module is a facility to define multiple templates in a single file. To indicate a file is in fact a module we put
 a <code>{% module %}</code> construct at the beginning of the file.</p>

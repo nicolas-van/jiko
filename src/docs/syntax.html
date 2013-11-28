@@ -125,9 +125,9 @@ translated to real JavaScript functions that can be called like any other templa
 
     <p>Today: %{renderDate({date: new Date()})}</p>
 
-`{% function %}` constructs must have a `name` parameter specifying the name of the template function. They end with
-a `{% end %}`. Here we use the `%{}` construct instead of `${}` because when we call the `renderDate` template it
-already returns valid HTML, so we don't have to escape it.
+`{% function %}` constructs must have a `name` parameter specifying the name of the template function. They end with a
+`{% end %}` construct. Here we use the `%{}` construct instead of `${}` because when we call the `renderDate` template
+it already returns valid HTML, so we don't have to escape it.
 
 Modules
 -------
