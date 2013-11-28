@@ -1,0 +1,27 @@
+{
+  "name": "jiko",
+  "version": "0.8.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "underscore": ">=1.4.4"
+  },
+  "devDependencies": {
+    "mocha": "1.12",
+    "ristretto": "~1.2.0"
+  },
+  "homepage": "https://github.com/nicolas-van/jiko",
+  "_release": "0.8.0",
+  "_resolution": {
+    "type": "version",
+    "tag": "0.8.0",
+    "commit": "2d9e18ccb96b9115902440e9b678d72972c93668"
+  },
+  "_source": "git://github.com/nicolas-van/jiko.git",
+  "_target": "~0.8.0",
+  "_originalSource": "jiko",
+  "_direct": true
+}

@@ -1,0 +1,36 @@
+<%!
+    title = "Jiko - Syntax Guide"
+    description = "Syntax Guide for the Jiko Template Engine"
+    import mypygreen
+%>
+
+<%inherit file="/common.mako"/>
+
+<%block name="mainContent">
+<%text filter="mypygreen.markdown">
+
+Syntax Guide
+============
+
+Before explaining the syntax of Jiko in details, it's important to notice that all Jiko templates are compiled to
+JavaScript code. Every syntax element has an equivalent in JavaScript and understanding the resulting code can be
+useful.
+
+To ease debugging, Jiko was created to generate a JavaScript code as clean as possible. So you are invited to take a
+look at that generated code to precisely understand how Jiko works.
+
+Expression Escaping
+-------------------
+
+The most basic task of a template engine is probably to output a variable. Jiko uses the `${}` syntax:
+
+    :::html+mako
+    The current time is ${new Date().toString}.
+
+Expressions inside `${}` must simply be any kind of valid JavaScript expression.
+
+Every time the `${}` construct is used, the `escape()` method will be called with the result of the expression
+evaluation. `escape()` is a function defined in all Jiko
+
+</%text>
+</%block>

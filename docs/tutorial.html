@@ -17,6 +17,8 @@
     
     
     <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <script type="text/javascript" src="/static/libs/underscore/underscore.js"></script>
+    <script type="text/javascript" src="/static/libs/jiko/jiko.js"></script>
 
 </head>
 <body>
@@ -88,6 +90,99 @@
                     
                     
 <h1 id="tutorial">Tutorial</h1>
+<h2 id="installation-for-on-the-fly-evaluation">Installation for On-the-Fly Evaluation</h2>
+<p>There are two ways to use Jiko. The recommended way for production environments is to pre-compile the templates
+server-side. But to test Jiko it's faster to compile templates on-the-fly. Here is how to do it in both node.js and
+the browser:</p>
+<h3 id="in-nodejs">In Node.js</h3>
+<div class="codehilite"><pre>npm install jiko
+</pre></div>
+
+
+<p>To include jiko in your project:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">jiko</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;jiko&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<h3 id="in-the-browser">In the Browser</h3>
+<p>You can download the latest version on the <a href="/releases.html">download page</a> or use <a href="http://bower.io/">Bower</a>:</p>
+<div class="codehilite"><pre>bower install jiko
+</pre></div>
+
+
+<p>In the browser you can use any AMD or CommonJS loader. You can also include directly the Jiko source file and
+underscore. When you do so, don't forget Jiko has a dependency on <a href="http://underscorejs.org/">underscore</a>, which is
+bundled in the release archive and downloaded if you use Bower.</p>
+<div class="codehilite"><pre><span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;underscore.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">&quot;text/javascript&quot;</span> <span class="na">src=</span><span class="s">&quot;jiko.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</pre></div>
+
+
+<p>If you directly include the source files the methods of Jiko will be available under the <code>jiko</code> global variable.</p>
+<h2 id="a-first-template">A First Template</h2>
+<p>Now it's time for the classic Hello World. Copy-paste this example:</p>
+<div class="codehilite"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">jiko</span><span class="p">.</span><span class="nx">evaluate</span><span class="p">(</span><span class="s2">&quot;Hello ${&#39;Wo&#39; + &#39;rld&#39;}&quot;</span><span class="p">));</span>
+</pre></div>
+
+
+<p>That's it, you evaluated your first Jiko template!</p>
+<h2 id="loading-templates-from-a-file">Loading Templates From a File</h2>
+<p>As useful it can be to directly evaluate a string using <code>jiko.evaluate()</code>, it's quite a problem to have many lines
+of templates contained in a JavaScript string, especially with all the characters you'll have to escape. To solve this
+problem Jiko templates can be loaded from a file.</p>
+<p>As an example create a file named <code>template.html</code> in the folder of your application and put this code in it:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello, my name is <span class="cp">${</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>Now in your application use this code:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">template</span> <span class="o">=</span> <span class="nx">jiko</span><span class="p">.</span><span class="nx">loadFile</span><span class="p">(</span><span class="s2">&quot;template.html&quot;</span><span class="p">);</span>
+</pre></div>
+
+
+<p><code>jiko.loadFile</code> has a different behavior depending you are in node.js or a browser. In node.js it will load a file
+from the file system. In a browser it will perform a GET request to the server to get the content of the file. That
+request will always be synchronous and will block the JavaScript interpreter until we get the response.</p>
+<p>The <code>template</code> variable is now a function representing our template that can be called at any time. Since in this
+example template we used a variable named <code>name</code> we also have to pass a value for that variable for the template to
+work:</p>
+<div class="codehilite"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">template</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;Nicolas&#39;</span><span class="p">}));</span>
+</pre></div>
+
+
+<h2 id="multiple-templates-in-a-file">Multiple Templates in a File</h2>
+<p>When using template engines in JavaScript application, experience tells us that we generally use a lot of them. When
+you add the fact that it's not recommended to load too many files for performance reasons it can be quite useful to
+be able to define multiple templates in a single file. This is possible in Jiko. Take a look at the <code>mytemplates.html</code>
+file:</p>
+<div class="codehilite"><pre>{% module %}
+
+{% function name=&quot;firstTemplate&quot; %}
+    This is template number <span class="cp">${</span><span class="mi">1</span><span class="cp">}</span>.
+{% end %}
+
+{% function name=&quot;secondTemplate&quot; %}
+    This is template number <span class="cp">${</span><span class="mi">2</span><span class="cp">}</span>.
+{% end %}
+</pre></div>
+
+
+<p>When loading a file beginning with <code>{% module %}</code> using <code>jiko.loadFile()</code>, the result will not be a function. It will
+be a dictionary containing all the functions defined in the file. Example:</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">mytemplates</span> <span class="o">=</span> <span class="nx">jiko</span><span class="p">.</span><span class="nx">loadFile</span><span class="p">(</span><span class="s2">&quot;mytemplate.html&quot;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mytemplates</span><span class="p">.</span><span class="nx">firstTemplate</span><span class="p">());</span>
+<span class="cm">/* &gt;&gt;&gt; This is template number 1 */</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mytemplates</span><span class="p">.</span><span class="nx">secondTemplate</span><span class="p">());</span>
+<span class="cm">/* &gt;&gt;&gt; This is template number 2 */</span>
+</pre></div>
+
+
+<h2 id="going-further">Going Further</h2>
+<p>This tutorial covered the basic about loading and executing templates. To use Jiko effectively you should at least
+take a look at the <a href="/docs/syntax.html">Syntax guide</a>. You can also take a look at the complete
+<a href="/docs/docs.html">Documentation</a>.</p>
 
                 </div>
             </div>

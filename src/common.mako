@@ -14,6 +14,8 @@
 
 <%block name="head">
     <link rel="stylesheet" type="text/css" href="/static/css/style.css" />
+    <script type="text/javascript" src="/static/libs/underscore/underscore.js"></script>
+    <script type="text/javascript" src="/static/libs/jiko/jiko.js"></script>
 </%block>
 
 <%block name="beforeContent">

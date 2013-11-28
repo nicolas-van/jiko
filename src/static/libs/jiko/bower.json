@@ -1,0 +1,16 @@
+{
+  "name": "jiko",
+  "version": "0.8.0",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ],
+  "dependencies": {
+    "underscore": ">=1.4.4"
+  },
+  "devDependencies": {
+    "mocha": "1.12",
+    "ristretto": "~1.2.0"
+  }
+}

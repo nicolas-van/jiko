@@ -5,8 +5,8 @@
 <head>
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Jiko - Full Featured Template Engine for JavaScript</title>
-    <meta name="description" content="Jiko - Full Featured Template Engine for JavaScript">
+    <title>Jiko - Syntax Guide</title>
+    <meta name="description" content="Jiko - Syntax Guide">
     <meta name="author" content="Nicolas Vanhoren">
 
     
@@ -39,67 +39,39 @@
 
     <div class="wrap">
 
-        <div class="container noMenu">
+        <div class="container ">
 
             <div class="row">
-                <div class="rightAreaCell col-md-12">
-                    
-                    
+                <div class="leftAreaCell col-md-3">
                     
 
-<div class="jikoHeader row">
-    <div class="jikoMainLogo col-md-5">
-        <img src="/static/img/horse_200.png"/>
+<div class="sidePageHeader">
+    <div class="sidePageHeader sideBlock">
+        <a href="/"><img src="/static/img/horse_150.png"></img></a>
+        <div>
+            <h1>Jiko</h1>
+            <h2>Full Featured Template Engine for JavaScript</h2>
+        </div>
     </div>
-    <div class="col-md-7">
-        <h1>Jiko</h1>
-        <h5>Full Featured Template Engine for JavaScript</h5>
-        <div class="horizontalSocialNetwork">
-            
+    <div class="verticalSocialNetwork">
+        
     <a href="https://twitter.com/share" class="twitter-share-button" data-url="http://jiko.neoname.eu" data-text="Jiko - Full Featured Template Engine for JavaScript" data-via="nicolasvanhoren" data-lang="fr">Tweeter</a>
     <a href="https://twitter.com/nicolasvanhoren" class="twitter-follow-button" data-show-count="false" data-show-screen-name="false">Follow @nicolasvanhoren</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
     <iframe src="http://ghbtns.com/github-btn.html?user=nicolas-van&repo=jiko&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="110" height="20"></iframe>
 
-        </div>
     </div>
-</div>
-
-<div class="horizontalMenu">
-    
+    <div class="sideNavigation sideBlock">
+        <h3>Navigation</h3>
+        
     <a href="/">home</a>
     <a href="/releases.html">download</a>
     <a href="/docs/docs.html">documentation</a>
 
-</div>
-
-<p>Jiko is a modern and easy to use template engine for Javascript. Its objective is to provide to Javascript programmers a
-way to write templates with an engine as powerful as server-side state of the art template engines like Jinja and Mako.</p>
-<div class="codehilite"><pre><span class="cp">&lt;%</span>
-    <span class="n">var</span> <span class="n">array</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
-<span class="cp">%&gt;</span>
-<span class="nt">&lt;div&gt;</span>
-    <span class="cp">%</span> <span class="n">_</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nt">&lt;div&gt;</span>Hello world <span class="cp">${</span><span class="n">el</span><span class="cp">}</span> times!<span class="nt">&lt;/div&gt;</span>
-    <span class="cp">%</span> <span class="p">});</span>
-<span class="nt">&lt;/div&gt;</span>
-</pre></div>
-
-
-<p>Jiko's features:</p>
-<ul>
-<li>Its syntax is as simple and direct as possible. Influenced by well-known template engines.</li>
-<li><em>Don't reinvent the wheel!</em> Why use a new language for expressions when you can use JavaScript?</li>
-<li>Allows multiple templates to be defined in a single template file.</li>
-<li>Compiles templates directly to Javascript to be as fast as possible.</li>
-<li>Allows browser-side on-the-fly compilation for development and server-side compilation for production.</li>
-<li>Works in a browser and inside Node.js.</li>
-</ul>
-<p>Jiko is still in development. You can help to improve it on Github.</p>
-<p>Interested? Take a look at the <a href="/docs/tutorial.html">Tutorial</a>.</p>
-
-<div class="horizontalMenu">
-    
+    </div>
+    <div class="usefulLinks sideBlock">
+        <h3>Useful Links</h3>
+        
     <a href="https://github.com/nicolas-van/jiko/issues">Bug tracker</a>
     <a href="https://github.com/nicolas-van/jiko">Jiko @ Github</a>
     
@@ -108,8 +80,30 @@ way to write templates with an engine as powerful as server-side state of the ar
     <a href="https://twitter.com/nicolasvanhoren">Author's twitter</a>
 
 
+    </div>
 </div>
 
+
+                </div>
+                <div class="rightAreaCell col-md-9">
+                    
+                    
+                    
+<h1 id="syntax-guide">Syntax Guide</h1>
+<p>Before explaining the syntax of Jiko in details, it's important to notice that all Jiko templates are compiled to
+JavaScript code. Every syntax element has an equivalent in JavaScript and understanding the resulting code can be
+useful.</p>
+<p>To ease debugging, Jiko was created to generate a JavaScript code as clean as possible. So you are invited to take a
+look at that generated code to precisely understand how Jiko works.</p>
+<h2 id="expression-escaping">Expression Escaping</h2>
+<p>The most basic task of a template engine is probably to output a variable. Jiko uses the <code>${}</code> syntax:</p>
+<div class="codehilite"><pre>The current time is <span class="cp">${</span><span class="n">new</span> <span class="n">Date</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="cp">}</span>.
+</pre></div>
+
+
+<p>Expressions inside <code>${}</code> must simply be any kind of valid JavaScript expression.</p>
+<p>Every time the <code>${}</code> construct is used, the <code>escape()</code> method will be called with the result of the expression
+evaluation. <code>escape()</code> is a function defined in all Jiko</p>
 
                 </div>
             </div>
