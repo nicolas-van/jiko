@@ -172,7 +172,7 @@ their values.</p>
 <h2 id="functions">Functions</h2>
 <p>The <code>{% function %}</code> construct was already demonstrated in the <a href="/docs/tutorial.html#multiple-templates-
 in-a-file">tutorial</a>. There we explained it allows to put multiple template functions in a single file.</p>
-<p>What was not explained is that you can actually define `{% function %}' constructs anywhere in Jiko. They will be
+<p>What was not explained is that you can actually define <code>{% function %}</code> constructs anywhere in Jiko. They will be
 translated to real JavaScript functions that can be called like any other template functions:</p>
 <div class="codehilite"><pre>{% function name=&quot;renderDate&quot; %}
     <span class="nt">&lt;strong&gt;</span><span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getDay</span><span class="p">()</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span><span class="cp">}</span><span class="nt">&lt;/strong&gt;</span>
