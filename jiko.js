@@ -335,8 +335,19 @@ function declare(_, isNode) {
                 case "block":
                 if (value.type === "module") {
                     _.each(acceptedTokens, function(t) {
-                        checkValidity(t);
+                        switch (t.type) {
+                            case "text":
+                            checkValidity(t);
+                            break;
+                            case "comment":
+                            break;
+                            case "multiComment":
+                            break;
+                            default:
+                            throw new Error("Unexpected token type before {% module %}: " + t.type);
+                        }
                     });
+                    source = "";
                     isModule = true;
                 } else if (value.type === "function") {
                     var name = value.args.name;

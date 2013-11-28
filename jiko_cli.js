@@ -8,7 +8,7 @@ var path = require("path");
 
 
 var program = require('commander');
-program.version('0.7.0');
+program.version('0.8.1');
 
 var _trim = function(t) {
     return t.trim();
