@@ -76,13 +76,21 @@
 <p>Jiko is a modern and easy to use template engine for Javascript. Its objective is to provide to Javascript programmers a
 way to write templates with an engine as powerful as server-side state of the art template engines like Jinja and Mako.</p>
 <div class="codehilite"><pre><span class="cp">&lt;%</span>
-    <span class="n">var</span> <span class="n">array</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">);</span>
+    <span class="n">var</span> <span class="n">rows</span> <span class="o">=</span> <span class="n">_</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">_</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="n">_</span><span class="o">.</span><span class="n">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">);</span> <span class="p">});</span>
 <span class="cp">%&gt;</span>
-<span class="nt">&lt;div&gt;</span>
-    <span class="cp">%</span> <span class="n">_</span><span class="o">.</span><span class="n">each</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
-    <span class="nt">&lt;div&gt;</span>Hello world <span class="cp">${</span><span class="n">el</span><span class="cp">}</span> times!<span class="nt">&lt;/div&gt;</span>
+{% function name=&quot;makeRow&quot; %}
+    <span class="nt">&lt;tr&gt;</span>
+    <span class="cp">%</span> <span class="n">row</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nt">&lt;td&gt;</span><span class="cp">${</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/td&gt;</span>
     <span class="cp">%</span> <span class="p">});</span>
-<span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/tr&gt;</span>
+{% end %}
+
+<span class="nt">&lt;table&gt;</span>
+    <span class="cp">%</span> <span class="n">rows</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">row</span><span class="p">)</span> <span class="p">{</span>
+        <span class="cp">%</span><span class="p">{</span><span class="n">makeRow</span><span class="p">({</span><span class="n">row</span><span class="p">:</span> <span class="n">row</span><span class="p">})}</span>
+    <span class="cp">%</span> <span class="p">});</span>
+<span class="nt">&lt;/table&gt;</span>
 </pre></div>
 
 

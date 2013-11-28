@@ -35,13 +35,21 @@ way to write templates with an engine as powerful as server-side state of the ar
 
     :::html+mako
     <%
-        var array = _.range(1, 11);
+        var rows = _.map(_.range(0, 10), function(el) { return _.range(0, 10); });
     %>
-    <div>
-        % _.each(array, function(el) {
-        <div>Hello world ${el} times!</div>
+    {% function name="makeRow" %}
+        <tr>
+        % row.forEach(function(name) {
+            <td>${name}</td>
         % });
-    </div>
+        </tr>
+    {% end %}
+
+    <table>
+        % rows.forEach(function(row) {
+            %{makeRow({row: row})}
+        % });
+    </table>
 
 Jiko's features:
 
