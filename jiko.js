@@ -284,6 +284,7 @@ function declare(_, isNode) {
             source += t ? "__p += " + t + ";\n" : '';
         };
         var escapePrint = function(t) {
+            t = rmWhite(t);
             t = (t || '').split("\n");
             for(var i = 0; i < t.length; i++) {
                 var v = t[i];
