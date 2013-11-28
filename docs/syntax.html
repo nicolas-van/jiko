@@ -97,13 +97,145 @@ useful.</p>
 look at that generated code to precisely understand how Jiko works.</p>
 <h2 id="expression-escaping">Expression Escaping</h2>
 <p>The most basic task of a template engine is probably to output a variable. Jiko uses the <code>${}</code> syntax:</p>
-<div class="codehilite"><pre>The current time is <span class="cp">${</span><span class="n">new</span> <span class="n">Date</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="cp">}</span>.
+<div class="codehilite"><pre>The current time is <span class="cp">${</span><span class="n">new</span> <span class="n">Date</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="cp">}</span>.
 </pre></div>
 
 
 <p>Expressions inside <code>${}</code> must simply be any kind of valid JavaScript expression.</p>
-<p>Every time the <code>${}</code> construct is used, the <code>escape()</code> method will be called with the result of the expression
-evaluation. <code>escape()</code> is a function defined in all Jiko</p>
+<p>Every time the <code>${}</code> construct is used, <code>escape_function()</code> will be called with the result of the expression evaluation.
+<code>escape_function()</code> is a function defined in all Jiko compiled templates. Its default behavior is to escape HTML. So all
+expressions given to <code>${}</code> will be escaped.</p>
+<p>Please note that you could redefine <code>escape_function()</code> to use another escaping mechanism if you don't intend to output
+HTML.</p>
+<h2 id="expression-substitution">Expression Substitution</h2>
+<p>If you know that the variable you want to output is some valid HTML and you don't want to escape it you should use the
+<code>%{}</code> construct:</p>
+<div class="codehilite"><pre><span class="nt">&lt;div&gt;</span>I like to put some %{&quot;<span class="nt">&lt;em&gt;</span>emphasis<span class="nt">&lt;/em&gt;</span>&quot;} some times.<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>Expressions given to <code>%{}</code> are not processed through <code>escape_function()</code> like with <code>${}</code>.</p>
+<h2 id="javascript-blocks">JavaScript Blocks</h2>
+<p>To put one or multiple lines of JavaScript in the generated code, use the <code>&lt;% %&gt;</code> construct:</p>
+<div class="codehilite"><pre><span class="cp">&lt;%</span>
+    <span class="n">var</span> <span class="n">now</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Date</span><span class="p">();</span>
+    <span class="n">var</span> <span class="n">tomorrow</span> <span class="o">=</span> <span class="n">new</span> <span class="n">Date</span><span class="p">(</span><span class="n">now</span><span class="o">.</span><span class="n">getTime</span><span class="p">()</span> <span class="o">+</span> <span class="p">(</span><span class="mi">24</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">60</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">));</span>
+<span class="cp">%&gt;</span>
+<span class="nt">&lt;div&gt;</span>Let&#39;s meet tomorrow at this time: <span class="cp">${</span><span class="n">tomorrow</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="cp">}</span>.<span class="nt">&lt;/div&gt;</span>
+</pre></div>
+
+
+<p>Inside a JavaScript block, you are free to use the <code>print()</code> function to output some text in the current template. When
+doing so, don't forget to escape the outputed text.</p>
+<div class="codehilite"><pre><span class="nt">&lt;ul&gt;</span>
+    <span class="cp">&lt;%</span>
+        <span class="p">[</span><span class="s">&quot;apple&quot;</span><span class="p">,</span> <span class="s">&quot;banana&quot;</span><span class="p">,</span> <span class="s">&quot;pie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">print</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&quot;</span> <span class="o">+</span> <span class="n">escape_function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">);</span>
+        <span class="p">});</span>
+    <span class="cp">%&gt;</span>
+<span class="nt">&lt;/ul&gt;</span>
+</pre></div>
+
+
+<h2 id="single-line-of-javascript">Single Line of JavaScript</h2>
+<p>JavaScript blocks are useful but the syntax is not so nice anymore when you want a single line of JavaScript. This is
+often the case when you use control structures. For these use cases, Jiko also has another construct: the single line
+<code>%</code>.</p>
+<div class="codehilite"><pre><span class="cp">%</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">el</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+<span class="cp">%</span> <span class="p">});</span>
+</pre></div>
+
+
+<p>Lines beginning with the <code>%</code> character will be considered as JavaScript until the end of the line.</p>
+<p>This syntax allows a cleaner code in some cases. You should learn both the JavaScript blocks construct and the single
+line construct and switch between those two syntax according to the situation.</p>
+<h2 id="template-parameters">Template Parameters</h2>
+<p>Usually templates are used to render a view according to existing data. To give parameters to a template function you
+must give it a dictionary as first parameter. The content of that dictionary will define the name of the parameters and
+their values.</p>
+<div class="codehilite"><pre><span class="kd">var</span> <span class="nx">mytemplate</span><span class="o">=</span> <span class="nx">jiko</span><span class="p">.</span><span class="nx">loadFile</span><span class="p">(</span><span class="s2">&quot;mytemplate.html&quot;</span><span class="p">);</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mytemplates</span><span class="p">({</span><span class="nx">customers</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Harrold&quot;</span><span class="p">,</span> <span class="s2">&quot;Richard&quot;</span><span class="p">,</span> <span class="s2">&quot;Bill&quot;</span><span class="p">]}));</span>
+</pre></div>
+
+
+<p>The <code>mytemplate.html</code> file:</p>
+<div class="codehilite"><pre><span class="nt">&lt;p&gt;</span>Customers:<span class="nt">&lt;/p&gt;</span>
+<span class="nt">&lt;ul&gt;</span>
+<span class="cp">%</span> <span class="n">customers</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nt">&lt;li&gt;</span><span class="cp">${</span><span class="n">el</span><span class="cp">}</span><span class="nt">&lt;/li&gt;</span>
+<span class="cp">%</span> <span class="p">});</span>
+<span class="nt">&lt;/ul&gt;</span>
+</pre></div>
+
+
+<h2 id="functions">Functions</h2>
+<p>The <code>{% function %}</code> construct was already demonstrated in the <a href="/docs/tutorial.html#multiple-templates-
+in-a-file">tutorial</a>. There we explained it allows to put multiple template functions in a single file.</p>
+<p>What was not explained is that you can actually define `{% function %}' constructs anywhere in Jiko. They will be
+translated to real JavaScript functions that can be called like any other template functions:</p>
+<div class="codehilite"><pre>{% function name=&quot;renderDate&quot; %}
+    <span class="nt">&lt;strong&gt;</span><span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getDay</span><span class="p">()</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span><span class="cp">}</span><span class="nt">&lt;/strong&gt;</span>
+{% end %}
+
+<span class="nt">&lt;p&gt;</span>Today: %{renderDate({date: new Date()})}<span class="nt">&lt;/p&gt;</span>
+</pre></div>
+
+
+<p><code>{% function %}</code> constructs must have a <code>name</code> parameter specifying the name of the template function. They end with
+a <code>{% end %}</code>. Here we use the <code>%{}</code> construct instead of <code>${}</code> because when we call the <code>renderDate</code> template it
+already returns valid HTML, so we don't have to escape it.</p>
+<h2 id="modules">Modules</h2>
+<p>To module is a facility to define multiple templates in a single file. To indicate a file is in fact a module we put
+a <code>{% module %}</code> construct at the beginning of the file.</p>
+<div class="codehilite"><pre>{% module %}
+
+{% function name=&quot;renderCustomer&quot; %}
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">customer</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">customer</span><span class="o">.</span><span class="n">account</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+{% end %}
+
+<span class="cp">&lt;%</span>
+    <span class="n">var</span> <span class="n">precision</span> <span class="o">=</span> <span class="mi">2</span><span class="p">;</span>
+<span class="cp">%&gt;</span>
+
+{% function name=&quot;renderBill&quot; %}
+    <span class="cp">%</span><span class="p">{</span><span class="n">renderCustomer</span><span class="p">({</span><span class="n">customer</span><span class="p">:</span> <span class="n">customer</span><span class="p">})}</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">product</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">product</span><span class="o">.</span><span class="n">price</span><span class="o">.</span><span class="n">toFixed</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span><span class="cp">}</span>$<span class="nt">&lt;/p&gt;</span>
+{% end %}
+</pre></div>
+
+
+<p>The <code>renderBill</code> template could be called using this JavaScript code:</p>
+<div class="codehilite"><pre><span class="nx">mymodule</span><span class="p">.</span><span class="nx">renderBill</span><span class="p">({</span><span class="nx">customer</span><span class="o">:</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Albert&quot;</span><span class="p">,</span> <span class="nx">account</span><span class="o">:</span> <span class="s2">&quot;123&quot;</span><span class="p">},</span> <span class="nx">product</span><span class="o">:</span> <span class="p">{</span><span class="nx">name</span><span class="o">:</span> <span class="s2">&quot;Keyboard&quot;</span><span class="p">,</span> <span class="nx">price</span><span class="o">:</span> <span class="mf">8.9</span><span class="p">}});</span>
+</pre></div>
+
+
+<p>Once a Jiko file beginning with <code>{% module %}</code> is compiled using <code>jiko.loadFile()</code> or using the server-side
+pre-processor, it will result in a dictionary instead of a function. That dictionary will contain every functions
+defined in the module.</p>
+<p>Please note that all functions defined in a module, as well as any JavaScript variable declared, are all located in
+the same scope. So it's possible for functions to call each others or to use variables defined outside a function like
+in the above example.</p>
+<h2 id="comments">Comments</h2>
+<p>There are two notations to mark comments in Jiko: single-line and multi-lines.</p>
+<div class="codehilite"><pre><span class="cp">## This is a single-line comment</span>
+This is some text
+{* This is 
+a multi-line comment *}
+</pre></div>
+
+
+<p>Comments using the Jiko notation will not be outputted at all.</p>
+<h2 id="escaping-jiko-constructs">Escaping Jiko Constructs</h2>
+<p>If, for one reason or another, you really need to output a text like <code>${exp}</code> in your HTML code you'll have a problem
+because Jiko will try to interpret it. To solve this problem Jiko supports escaping of any construct using <code>\</code>:</p>
+<div class="codehilite"><pre>\<span class="cp">${</span><span class="n">this</span> <span class="n">will</span> <span class="n">directly</span> <span class="n">appear</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">HTML</span><span class="cp">}</span>
+</pre></div>
+
+
+<p>The <code>\</code> can itself be escaped by doubling it, etc...</p>
 
                 </div>
             </div>

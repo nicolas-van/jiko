@@ -25,12 +25,170 @@ Expression Escaping
 The most basic task of a template engine is probably to output a variable. Jiko uses the `${}` syntax:
 
     :::html+mako
-    The current time is ${new Date().toString}.
+    The current time is ${new Date().toString()}.
 
 Expressions inside `${}` must simply be any kind of valid JavaScript expression.
 
-Every time the `${}` construct is used, the `escape()` method will be called with the result of the expression
-evaluation. `escape()` is a function defined in all Jiko
+Every time the `${}` construct is used, `escape_function()` will be called with the result of the expression evaluation.
+`escape_function()` is a function defined in all Jiko compiled templates. Its default behavior is to escape HTML. So all
+expressions given to `${}` will be escaped.
+
+Please note that you could redefine `escape_function()` to use another escaping mechanism if you don't intend to output
+HTML.
+
+Expression Substitution
+-----------------------
+
+If you know that the variable you want to output is some valid HTML and you don't want to escape it you should use the
+`%{}` construct:
+
+    :::html+mako
+    <div>I like to put some %{"<em>emphasis</em>"} some times.</div>
+
+Expressions given to `%{}` are not processed through `escape_function()` like with `${}`.
+
+JavaScript Blocks
+-----------------
+
+To put one or multiple lines of JavaScript in the generated code, use the `<% %>` construct:
+
+    :::html+mako
+    <%
+        var now = new Date();
+        var tomorrow = new Date(now.getTime() + (24 * 60 * 60 * 1000));
+    %>
+    <div>Let's meet tomorrow at this time: ${tomorrow.toString()}.</div>
+
+Inside a JavaScript block, you are free to use the `print()` function to output some text in the current template. When
+doing so, don't forget to escape the outputed text.
+
+    :::html+mako
+    <ul>
+        <%
+            ["apple", "banana", "pie"].forEach(function(el) {
+                print("<li>" + escape_function(el) + "</li>");
+            });
+        %>
+    </ul>
+
+Single Line of JavaScript
+-------------------------
+
+JavaScript blocks are useful but the syntax is not so nice anymore when you want a single line of JavaScript. This is
+often the case when you use control structures. For these use cases, Jiko also has another construct: the single line
+`%`.
+
+    :::html+mako
+    % [1, 2, 3, 4, 5].forEach(function(el) {
+        <p>${el}</p>
+    % });
+
+Lines beginning with the `%` character will be considered as JavaScript until the end of the line.
+
+This syntax allows a cleaner code in some cases. You should learn both the JavaScript blocks construct and the single
+line construct and switch between those two syntax according to the situation.
+
+Template Parameters
+-------------------
+
+Usually templates are used to render a view according to existing data. To give parameters to a template function you
+must give it a dictionary as first parameter. The content of that dictionary will define the name of the parameters and
+their values.
+
+    :::javascript
+    var mytemplate= jiko.loadFile("mytemplate.html");
+    console.log(mytemplates({customers: ["Harrold", "Richard", "Bill"]}));
+
+The `mytemplate.html` file:
+
+    :::html+mako
+    <p>Customers:</p>
+    <ul>
+    % customers.forEach(function(el) {
+        <li>${el}</li>
+    % });
+    </ul>
+
+Functions
+---------
+
+The `{% function %}` construct was already demonstrated in the [tutorial](/docs/tutorial.html#multiple-templates-
+in-a-file). There we explained it allows to put multiple template functions in a single file.
+
+What was not explained is that you can actually define `{% function %}' constructs anywhere in Jiko. They will be
+translated to real JavaScript functions that can be called like any other template functions:
+
+    :::html+mako
+    {% function name="renderDate" %}
+        <strong>${date.getMonth() + 1}-${date.getDay()}-${date.getYear()}</strong>
+    {% end %}
+
+    <p>Today: %{renderDate({date: new Date()})}</p>
+
+`{% function %}` constructs must have a `name` parameter specifying the name of the template function. They end with
+a `{% end %}`. Here we use the `%{}` construct instead of `${}` because when we call the `renderDate` template it
+already returns valid HTML, so we don't have to escape it.
+
+Modules
+-------
+
+To module is a facility to define multiple templates in a single file. To indicate a file is in fact a module we put
+a `{% module %}` construct at the beginning of the file.
+
+    :::html+mako
+    {% module %}
+
+    {% function name="renderCustomer" %}
+        <p>${customer.name}</p>
+        <p>${customer.account}</p>
+    {% end %}
+
+    <%
+        var precision = 2;
+    %>
+
+    {% function name="renderBill" %}
+        %{renderCustomer({customer: customer})}
+        <p>${product.name}</p>
+        <p>${product.price.toFixed(precision)}$</p>
+    {% end %}
+
+The `renderBill` template could be called using this JavaScript code:
+
+    :::javascript
+    mymodule.renderBill({customer: {name: "Albert", account: "123"}, product: {name: "Keyboard", price: 8.9}});
+
+Once a Jiko file beginning with `{% module %}` is compiled using `jiko.loadFile()` or using the server-side
+pre-processor, it will result in a dictionary instead of a function. That dictionary will contain every functions
+defined in the module.
+
+Please note that all functions defined in a module, as well as any JavaScript variable declared, are all located in
+the same scope. So it's possible for functions to call each others or to use variables defined outside a function like
+in the above example.
+
+Comments
+--------
+
+There are two notations to mark comments in Jiko: single-line and multi-lines.
+
+    ::html+mako
+    ## This is a single-line comment
+    This is some text
+    {* This is 
+    a multi-line comment *}
+
+Comments using the Jiko notation will not be outputted at all.
+
+Escaping Jiko Constructs
+------------------------
+
+If, for one reason or another, you really need to output a text like `${exp}` in your HTML code you'll have a problem
+because Jiko will try to interpret it. To solve this problem Jiko supports escaping of any construct using `\`:
+
+    ::html+mako
+    \${this will directly appear in the HTML}
+
+The `\` can itself be escaped by doubling it, etc...
 
 </%text>
 </%block>
