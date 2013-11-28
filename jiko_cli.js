@@ -34,7 +34,9 @@ compile.description('Compile a Jiko template file to a javascript file.')
         var namespace = namespaceFromFileName(filename);
         var compiled = jiko.compile(content);
         compiled = "(function() {\n" +
-            "var declare = " + compiled + ";\n" +
+            "var declare = function() {\n" +
+            "return " + compiled + ";\n" +
+            "};\n" + 
             "if (typeof(define) !== 'undefined') {\n" +
             "    define([], declare);\n" +
             "} else if (typeof(exports) !== 'undefined') {\n" +
