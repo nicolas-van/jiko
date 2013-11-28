@@ -28,7 +28,7 @@ var namespaceFromFileName = function(filename) {
 
 var compile = program.command('compile <file>');
 compile.description('Compile a Jiko template file to a javascript file.')
-    .option('-o, --output', 'Do not automatically write file, outputs in console instead.')
+    .option('-o, --output', 'Does not automatically write file, outputs in console instead.')
     .action(function(filename, env){
         var content = fs.readFileSync(filename, "utf8");
         var namespace = namespaceFromFileName(filename);
