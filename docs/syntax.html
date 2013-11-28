@@ -213,7 +213,7 @@ a <code>{% module %}</code> construct at the beginning of the file.</p>
 
 
 <p>Once a Jiko file beginning with <code>{% module %}</code> is compiled using <code>jiko.loadFile()</code> or using the server-side
-pre-processor, it will result in a dictionary instead of a function. That dictionary will contain every functions
+precompiler, it will result in a dictionary instead of a function. That dictionary will contain every functions
 defined in the module.</p>
 <p>Please note that all functions defined in a module, as well as any JavaScript variable declared, are all located in
 the same scope. So it's possible for functions to call each others or to use variables defined outside a function like

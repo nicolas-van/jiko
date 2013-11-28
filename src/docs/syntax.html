@@ -159,7 +159,7 @@ The `renderBill` template could be called using this JavaScript code:
     mymodule.renderBill({customer: {name: "Albert", account: "123"}, product: {name: "Keyboard", price: 8.9}});
 
 Once a Jiko file beginning with `{% module %}` is compiled using `jiko.loadFile()` or using the server-side
-pre-processor, it will result in a dictionary instead of a function. That dictionary will contain every functions
+precompiler, it will result in a dictionary instead of a function. That dictionary will contain every functions
 defined in the module.
 
 Please note that all functions defined in a module, as well as any JavaScript variable declared, are all located in
