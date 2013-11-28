@@ -4,7 +4,7 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['jiko.js', 'test.js', 'jiko_cli.js'],
+            files: ['jiko.js', 'test.js', 'jiko_cli.js', 'test_cli.js'],
             options: {
                 es3: true, // ie 7 compatibility
                 eqeqeq: true, // no == or !=
@@ -30,9 +30,8 @@ module.exports = function(grunt) {
         },
         mochaTest: {
             main: {
-                src: ['test.js'],
+                src: ['test.js', 'test_cli.js'],
                 options: {
-                    ui: "qunit",
                 }
             }
         },

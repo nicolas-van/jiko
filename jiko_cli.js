@@ -36,7 +36,7 @@ compile.description('Compile a Jiko template file to a javascript file.')
         compiled = "(function() {\n" +
             "var declare = function() {\n" +
             "return " + compiled + ";\n" +
-            "};\n" + 
+            "};\n" +
             "if (typeof(define) !== 'undefined') {\n" +
             "    define([], declare);\n" +
             "} else if (typeof(exports) !== 'undefined') {\n" +

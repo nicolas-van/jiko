@@ -19,7 +19,9 @@ var transform = function(x) {
 
 var templates = jiko.loadFile("templates.html");
 
-test("base", function() {
+describe("Jiko", function() {
+
+it("base", function() {
     var r = templates.yop();
     assert.equal(trim(r), "Hello");
     r = templates.test({testVar: "azerty"});
@@ -35,23 +37,23 @@ test("base", function() {
 
 });
 
-test("escaping", function() {
+it("escaping", function() {
     var r = templates.testescaping();
     assert.equal(trim(r), "&lt;div&gt;&lt;&#x2F;div&gt;");
 });
 
-test("noescaping", function() {
+it("noescaping", function() {
     var r = templates.testnoescaping();
     assert.equal(trim(r), "<div></div>");
 });
 
-test("this", function() {
+it("this", function() {
     var obj = {str: "test"};
     var r = templates.testThis.call(obj);
     assert.equal(trim(r), obj.str);
 });
 
-test("slash_escape", function() {
+it("slash_escape", function() {
     var tmpl = jiko.loadTemplate("\\${1+1}");
     assert.equal(tmpl(), "${1+1}");
     tmpl = jiko.loadTemplate("\\\\${1+1}");
@@ -68,39 +70,39 @@ test("slash_escape", function() {
     assert.equal(tmpl(), "\\2\n2");
 });
 
-test("def", function() {
+it("def", function() {
     var r = templates.testDef();
     assert.equal(trim(r), "Test");
 });
 
-test("functional_prog", function() {
+it("functional_prog", function() {
     var r = templates.testFunctional();
     assert.equal(transform(r), "<div> Test </div>");
 });
 
-test("comment", function() {
+it("comment", function() {
     var r = templates.testComment();
     assert.equal(transform(r), "Test");
 });
 
-test("multiComment", function() {
+it("multiComment", function() {
     var r = templates.testMultiComment();
     assert.equal(transform(r), "Test");
 });
 
-test("print", function() {
+it("print", function() {
     var r = templates.printtest();
     assert.equal(transform(r), "Test");
 });
 
-test("singleLineEventSlashEscape", function() {
+it("singleLineEventSlashEscape", function() {
     var r = jiko.evaluate("\n\\%print(1+1)");
     assert.equal(r, "\n%print(1+1)");
     r = jiko.evaluate("\n\\\\%print(1+1)");
     assert.equal(r, "\n\\2");
 });
 
-test("keepUsefulWhitespaces", function() {
+it("keepUsefulWhitespaces", function() {
     var r = jiko.evaluate("Foo ${bar}", {bar:"Bar"});
     assert.equal(r, "Foo Bar");
     r = jiko.evaluate("${bar} Foo", {bar:"Bar"});
@@ -109,23 +111,25 @@ test("keepUsefulWhitespaces", function() {
     assert.equal(transform(r), "Foo Bar");
 });
 
-test("doesNotAddSpaces", function() {
+it("doesNotAddSpaces", function() {
     var r = jiko.evaluate("Foo${bar}", {bar:"Bar"});
     assert.equal(r, "FooBar");
     r = jiko.evaluate("${bar}Foo", {bar:"Bar"});
     assert.equal(r, "BarFoo");
 });
 
-test("singleLinePreviousSpace", function() {
+it("singleLinePreviousSpace", function() {
     var r = templates.singleLinePreviousSpace();
     assert.equal(transform(r), "abc def");
 });
 
-test("multiSingleLine", function() {
+it("multiSingleLine", function() {
     var r = templates.multiSingleLine();
     assert.equal(transform(r), "Test");
     r = jiko.evaluate("\n\n%if (true === true) {\nTest\n%}\n\n");
     assert.equal(transform(r), "Test");
+});
+
 });
 
 })();

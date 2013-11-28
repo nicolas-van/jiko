@@ -1,31 +1,36 @@
 {
-    "name": "jiko",
-    "version": "0.8.3",
-    "description": "Jiko Template Engine",
-    "main": "jiko.js",
-    "author": "Nicolas Vanhoren",
-    "homepage": "http://jiko.neoname.eu",
-    "keywords": ["jiko", "template", "engine"],
-    "repository" : {
-        "type": "git",
-        "url": "git://github.com/nicolas-van/jiko.git"
-    },
-    "dependencies": {
-        "underscore": ">=1.4.4",
-        "commander": ">=1.1.1"
-    },
-    "devDependencies": {
-        "grunt": "*",
-        "grunt-contrib-jshint": "*",
-        "grunt-contrib-compress": ">=0.5.2",
-        "grunt-mocha": "~0.4.1",
-        "grunt-mocha-test": "~0.7.0",
-        "mocha": "~1.14.0"
-    },
-    "engines": {
-        "node": ">=0.6.12"
-    },
-    "bin" : {
-        "jiko" : "jiko_cli.js"
-    }
+  "name": "jiko",
+  "version": "0.8.3",
+  "description": "Jiko Template Engine",
+  "main": "jiko.js",
+  "author": "Nicolas Vanhoren",
+  "homepage": "http://jiko.neoname.eu",
+  "keywords": [
+    "jiko",
+    "template",
+    "engine"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nicolas-van/jiko.git"
+  },
+  "dependencies": {
+    "underscore": ">=1.4.4",
+    "commander": ">=1.1.1"
+  },
+  "devDependencies": {
+    "grunt": "*",
+    "grunt-contrib-jshint": "*",
+    "grunt-contrib-compress": ">=0.5.2",
+    "grunt-mocha": "~0.4.1",
+    "grunt-mocha-test": "~0.7.0",
+    "mocha": "~1.14.0",
+    "execSync": "~1.0.1-pre"
+  },
+  "engines": {
+    "node": ">=0.6.12"
+  },
+  "bin": {
+    "jiko": "jiko_cli.js"
+  }
 }
