@@ -397,13 +397,13 @@ function declare(_, isNode) {
         if (isModule) {
             source = "var exports = {};\n" + source + "return exports;\n";
         } else {
-            source = printDirectives + "with (context || {}) {\n" + indent_(source) + "}\nreturn __p;\n";
+            source = printDirectives + source + "return __p;\n";
         }
         source = (options.noEsc ? '' : escapeDirectives) + source;
         if (isModule) {
             source = "(function() {\n" + indent_(source) + "})()";
         } else {
-            source = "function(context) {\n" + indent_(source) + "}";
+            source = "function(a) {\n" + indent_(source) + "}";
         }
 
         return {
@@ -427,8 +427,8 @@ function declare(_, isNode) {
         return new Function("return " + code + ";" + debug)();
     };
 
-    jiko.evaluate = function(text, context) {
-        return jiko.loadTemplate(text)(context);
+    jiko.evaluate = function(text, a) {
+        return jiko.loadTemplate(text)(a);
     };
 
     jiko.loadFile = function(filename) {
