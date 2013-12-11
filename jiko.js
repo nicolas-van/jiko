@@ -422,7 +422,7 @@ function declare(_, isNode) {
         options = options || {};
         var code = jiko.compile(text);
 
-        var debug = options.filename ? "\n//@ sourceURL=" + options.filename + "\n" : "";
+        var debug = options.fileName ? "\n//@ sourceURL=" + options.fileName + "\n" : "";
 
         return new Function("return " + code + ";" + debug)();
     };
@@ -431,18 +431,18 @@ function declare(_, isNode) {
         return jiko.loadTemplate(text)(a);
     };
 
-    jiko.loadFile = function(filename) {
+    jiko.loadFile = function(fileName) {
         var result;
         if (! isNode) {
             var req = new XMLHttpRequest();
-            req.open("GET", filename, false);
+            req.open("GET", fileName, false);
             req.send();
             result = req.responseText;
         } else {
             var fs = require("fs");
-            result = fs.readFileSync(filename, "utf8");
+            result = fs.readFileSync(fileName, "utf8");
         }
-        return jiko.loadTemplate(result, {filename: filename});
+        return jiko.loadTemplate(result, {fileName: fileName});
     };
 
     return jiko;
