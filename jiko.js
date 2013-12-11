@@ -399,11 +399,13 @@ function declare(_, isNode) {
         } else {
             source = printDirectives + source + "return __p;\n";
         }
-        source = (options.noEsc ? '' : escapeDirectives) + source;
         if (isModule) {
-            source = "(function() {\n" + indent_(source) + "})()";
+            source = "(function() {\n" + indent_((options.noEsc ? '' : escapeDirectives) + source) + "})()";
         } else {
             source = "function(a) {\n" + indent_(source) + "}";
+            if (! options.noEsc) {
+                source = "(function() {\n" + indent_(escapeDirectives + "return " + source + ";\n") + "})()";
+            }
         }
 
         return {
