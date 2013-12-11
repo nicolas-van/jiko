@@ -255,8 +255,7 @@ function declare(_, isNode) {
         return tokens;
     };
 
-    var printDirectives = "var __p = '';\n" +
-        "var print = function(t) { __p += t; };\n";
+    var printDirectives = "var o = '';\n";
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;" +
         "','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
@@ -281,7 +280,7 @@ function declare(_, isNode) {
             return tmp;
         } : function(x) { return x; };
         var appendPrint = function(t) {
-            source += t ? "__p += " + t + ";\n" : '';
+            source += t ? "o += " + t + ";\n" : '';
         };
         var escapePrint = function(t) {
             t = rmWhite(t);
@@ -397,7 +396,7 @@ function declare(_, isNode) {
         if (isModule) {
             source = "var exports = {};\n" + source + "return exports;\n";
         } else {
-            source = printDirectives + source + "return __p;\n";
+            source = printDirectives + source + "return o;\n";
         }
         if (isModule) {
             source = "(function() {\n" + indent_((options.noEsc ? '' : escapeDirectives) + source) + "})()";

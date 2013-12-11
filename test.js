@@ -96,9 +96,9 @@ it("print", function() {
 });
 
 it("singleLineEventSlashEscape", function() {
-    var r = jiko.evaluate("\n\\%print(1+1)");
-    assert.equal(r, "\n%print(1+1)");
-    r = jiko.evaluate("\n\\\\%print(1+1)");
+    var r = jiko.evaluate("\n\\%o += 1+1");
+    assert.equal(r, "\n%o += 1+1");
+    r = jiko.evaluate("\n\\\\%o += 1+1");
     assert.equal(r, "\n\\2");
 });
 
