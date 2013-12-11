@@ -103,18 +103,18 @@ it("singleLineEventSlashEscape", function() {
 });
 
 it("keepUsefulWhitespaces", function() {
-    var r = jiko.evaluate("Foo ${bar}", {bar:"Bar"});
+    var r = jiko.evaluate("Foo ${a.bar}", {bar:"Bar"});
     assert.equal(r, "Foo Bar");
-    r = jiko.evaluate("${bar} Foo", {bar:"Bar"});
+    r = jiko.evaluate("${a.bar} Foo", {bar:"Bar"});
     assert.equal(r, "Bar Foo");
     r = jiko.evaluate("Foo\n%if(true===true){\nBar\n%}");
     assert.equal(transform(r), "Foo Bar");
 });
 
 it("doesNotAddSpaces", function() {
-    var r = jiko.evaluate("Foo${bar}", {bar:"Bar"});
+    var r = jiko.evaluate("Foo${a.bar}", {bar:"Bar"});
     assert.equal(r, "FooBar");
-    r = jiko.evaluate("${bar}Foo", {bar:"Bar"});
+    r = jiko.evaluate("${a.bar}Foo", {bar:"Bar"});
     assert.equal(r, "BarFoo");
 });
 
