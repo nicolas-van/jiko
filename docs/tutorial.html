@@ -132,7 +132,7 @@ of templates contained in a JavaScript string, especially with all the character
 problem Jiko templates can be loaded from a file.</p>
 <p>As an example create a file named <code>template.html</code> in the folder of your application and put this code in it:</p>
 <div class="codehilite"><pre><span class="nt">&lt;div&gt;</span>
-    <span class="nt">&lt;p&gt;</span>Hello, my name is <span class="cp">${</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span>Hello, my name is <span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;/div&gt;</span>
 </pre></div>
 
@@ -146,8 +146,8 @@ problem Jiko templates can be loaded from a file.</p>
 from the file system. In a browser it will perform a GET request to the server to get the content of the file. That
 request will always be synchronous and will block the JavaScript interpreter until we get the response.</p>
 <p>The <code>template</code> variable is now a function representing our template that can be called at any time. Since in this
-example template we used a variable named <code>name</code> we also have to pass a value for that variable for the template to
-work:</p>
+example template we used an attribute named <code>name</code> contained in the <code>a</code> object we also have to pass a value for that
+attribute for the template to work:</p>
 <div class="codehilite"><pre><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">template</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="o">:</span> <span class="s1">&#39;Nicolas&#39;</span><span class="p">}));</span>
 </pre></div>
 

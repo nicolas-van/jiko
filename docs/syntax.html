@@ -152,8 +152,8 @@ often the case when you use control structures. For these use cases, Jiko also h
 line construct and switch between those two syntax according to the situation.</p>
 <h2 id="template-parameters">Template Parameters</h2>
 <p>Usually templates are used to render a view according to existing data. To give parameters to a template function you
-must give it a dictionary as first parameter. The content of that dictionary will define the name of the parameters and
-their values.</p>
+must give it a dictionary as first parameter. That dictionary will be available in the template as the <code>a</code> variable. In
+this case, <code>a</code> stands for <em>arguments</em>.</p>
 <div class="codehilite"><pre><span class="kd">var</span> <span class="nx">mytemplate</span><span class="o">=</span> <span class="nx">jiko</span><span class="p">.</span><span class="nx">loadFile</span><span class="p">(</span><span class="s2">&quot;mytemplate.html&quot;</span><span class="p">);</span>
 <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mytemplates</span><span class="p">({</span><span class="nx">customers</span><span class="o">:</span> <span class="p">[</span><span class="s2">&quot;Harrold&quot;</span><span class="p">,</span> <span class="s2">&quot;Richard&quot;</span><span class="p">,</span> <span class="s2">&quot;Bill&quot;</span><span class="p">]}));</span>
 </pre></div>
@@ -162,7 +162,7 @@ their values.</p>
 <p>The <code>mytemplate.html</code> file:</p>
 <div class="codehilite"><pre><span class="nt">&lt;p&gt;</span>Customers:<span class="nt">&lt;/p&gt;</span>
 <span class="nt">&lt;ul&gt;</span>
-<span class="cp">%</span> <span class="n">customers</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
+<span class="cp">%</span> <span class="n">a</span><span class="o">.</span><span class="n">customers</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
     <span class="nt">&lt;li&gt;</span><span class="cp">${</span><span class="n">el</span><span class="cp">}</span><span class="nt">&lt;/li&gt;</span>
 <span class="cp">%</span> <span class="p">});</span>
 <span class="nt">&lt;/ul&gt;</span>
@@ -175,7 +175,7 @@ in-a-file">tutorial</a>. There we explained it allows to put multiple template f
 <p>What was not explained is that you can actually define <code>{% function %}</code> constructs anywhere in Jiko. They will be
 translated to real JavaScript functions that can be called like any other template functions:</p>
 <div class="codehilite"><pre>{% function name=&quot;renderDate&quot; %}
-    <span class="nt">&lt;strong&gt;</span><span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getDay</span><span class="p">()</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">date</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span><span class="cp">}</span><span class="nt">&lt;/strong&gt;</span>
+    <span class="nt">&lt;strong&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getDay</span><span class="p">()</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span><span class="cp">}</span><span class="nt">&lt;/strong&gt;</span>
 {% end %}
 
 <span class="nt">&lt;p&gt;</span>Today: %{renderDate({date: new Date()})}<span class="nt">&lt;/p&gt;</span>
@@ -191,8 +191,8 @@ a <code>{% module %}</code> construct at the beginning of the file.</p>
 <div class="codehilite"><pre>{% module %}
 
 {% function name=&quot;renderCustomer&quot; %}
-    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">customer</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
-    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">customer</span><span class="o">.</span><span class="n">account</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">customer</span><span class="o">.</span><span class="n">account</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
 {% end %}
 
 <span class="cp">&lt;%</span>
@@ -200,9 +200,9 @@ a <code>{% module %}</code> construct at the beginning of the file.</p>
 <span class="cp">%&gt;</span>
 
 {% function name=&quot;renderBill&quot; %}
-    <span class="cp">%</span><span class="p">{</span><span class="n">renderCustomer</span><span class="p">({</span><span class="n">customer</span><span class="p">:</span> <span class="n">customer</span><span class="p">})}</span>
-    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">product</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
-    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">product</span><span class="o">.</span><span class="n">price</span><span class="o">.</span><span class="n">toFixed</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span><span class="cp">}</span>$<span class="nt">&lt;/p&gt;</span>
+    <span class="cp">%</span><span class="p">{</span><span class="n">renderCustomer</span><span class="p">({</span><span class="n">customer</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">customer</span><span class="p">})}</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">price</span><span class="o">.</span><span class="n">toFixed</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span><span class="cp">}</span>$<span class="nt">&lt;/p&gt;</span>
 {% end %}
 </pre></div>
 

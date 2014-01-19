@@ -67,7 +67,7 @@ As an example create a file named `template.html` in the folder of your applicat
 
     :::html+mako
     <div>
-        <p>Hello, my name is ${name}</p>
+        <p>Hello, my name is ${a.name}</p>
     </div>
 
 Now in your application use this code:
@@ -80,8 +80,8 @@ from the file system. In a browser it will perform a GET request to the server t
 request will always be synchronous and will block the JavaScript interpreter until we get the response.
 
 The `template` variable is now a function representing our template that can be called at any time. Since in this
-example template we used a variable named `name` we also have to pass a value for that variable for the template to
-work:
+example template we used an attribute named `name` contained in the `a` object we also have to pass a value for that
+attribute for the template to work:
 
     :::javascript
     console.log(template({'name': 'Nicolas'}));

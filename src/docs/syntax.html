@@ -92,8 +92,8 @@ Template Parameters
 -------------------
 
 Usually templates are used to render a view according to existing data. To give parameters to a template function you
-must give it a dictionary as first parameter. The content of that dictionary will define the name of the parameters and
-their values.
+must give it a dictionary as first parameter. That dictionary will be available in the template as the `a` variable. In
+this case, `a` stands for *arguments*.
 
     :::javascript
     var mytemplate= jiko.loadFile("mytemplate.html");
@@ -104,7 +104,7 @@ The `mytemplate.html` file:
     :::html+mako
     <p>Customers:</p>
     <ul>
-    % customers.forEach(function(el) {
+    % a.customers.forEach(function(el) {
         <li>${el}</li>
     % });
     </ul>
@@ -120,7 +120,7 @@ translated to real JavaScript functions that can be called like any other templa
 
     :::html+mako
     {% function name="renderDate" %}
-        <strong>${date.getMonth() + 1}-${date.getDay()}-${date.getYear()}</strong>
+        <strong>${a.date.getMonth() + 1}-${a.date.getDay()}-${a.date.getYear()}</strong>
     {% end %}
 
     <p>Today: %{renderDate({date: new Date()})}</p>
@@ -139,8 +139,8 @@ a `{% module %}` construct at the beginning of the file.
     {% module %}
 
     {% function name="renderCustomer" %}
-        <p>${customer.name}</p>
-        <p>${customer.account}</p>
+        <p>${a.customer.name}</p>
+        <p>${a.customer.account}</p>
     {% end %}
 
     <%
@@ -148,9 +148,9 @@ a `{% module %}` construct at the beginning of the file.
     %>
 
     {% function name="renderBill" %}
-        %{renderCustomer({customer: customer})}
-        <p>${product.name}</p>
-        <p>${product.price.toFixed(precision)}$</p>
+        %{renderCustomer({customer: a.customer})}
+        <p>${a.product.name}</p>
+        <p>${a.product.price.toFixed(a.precision)}$</p>
     {% end %}
 
 The `renderBill` template could be called using this JavaScript code:
