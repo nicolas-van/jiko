@@ -60,8 +60,8 @@ To put one or multiple lines of JavaScript in the generated code, use the `<% %>
     <div>Let's meet tomorrow at this time: ${tomorrow.toString()}.</div>
 
 Inside a JavaScript block, you are free to use the `o` variable which contains the text currentlry rendered to output
-some text in the current template. When doing so, don't forget to escape the outputed text. Just in case, `o` stands
-for *output*.
+some more text in the current template. When doing so, don't forget to escape the outputed text. Just in case, `o`
+stands for *output*.
 
     :::html+mako
     <ul>
@@ -87,7 +87,7 @@ often the case when you use control structures. For these use cases, Jiko also h
 Lines beginning with the `%` character will be considered as JavaScript until the end of the line.
 
 This syntax allows a cleaner code in some cases. You should learn both the JavaScript blocks construct and the single
-line construct and switch between those two syntax according to the situation.
+line construct and switch between those two syntaxes according to the situation.
 
 Template Parameters
 -------------------
@@ -121,7 +121,7 @@ translated to real JavaScript functions that can be called like any other templa
 
     :::html+mako
     {% function name="renderDate" %}
-        <strong>${a.date.getMonth() + 1}-${a.date.getDay()}-${a.date.getYear()}</strong>
+        <strong>${a.date.getMonth() + 1}-${a.date.getDay()}</strong>
     {% end %}
 
     <p>Today: %{renderDate({date: new Date()})}</p>
@@ -151,7 +151,7 @@ a `{% module %}` construct at the beginning of the file.
     {% function name="renderBill" %}
         %{renderCustomer({customer: a.customer})}
         <p>${a.product.name}</p>
-        <p>${a.product.price.toFixed(a.precision)}$</p>
+        <p>${a.product.price.toFixed(precision)}$</p>
     {% end %}
 
 The `renderBill` template could be called using this JavaScript code:

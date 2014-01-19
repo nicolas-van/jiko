@@ -126,8 +126,8 @@ HTML.</p>
 
 
 <p>Inside a JavaScript block, you are free to use the <code>o</code> variable which contains the text currentlry rendered to output
-some text in the current template. When doing so, don't forget to escape the outputed text. Just in case, <code>o</code> stands
-for <em>output</em>.</p>
+some more text in the current template. When doing so, don't forget to escape the outputed text. Just in case, <code>o</code>
+stands for <em>output</em>.</p>
 <div class="codehilite"><pre><span class="nt">&lt;ul&gt;</span>
     <span class="cp">&lt;%</span>
         <span class="p">[</span><span class="s">&quot;apple&quot;</span><span class="p">,</span> <span class="s">&quot;banana&quot;</span><span class="p">,</span> <span class="s">&quot;pie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
@@ -150,7 +150,7 @@ often the case when you use control structures. For these use cases, Jiko also h
 
 <p>Lines beginning with the <code>%</code> character will be considered as JavaScript until the end of the line.</p>
 <p>This syntax allows a cleaner code in some cases. You should learn both the JavaScript blocks construct and the single
-line construct and switch between those two syntax according to the situation.</p>
+line construct and switch between those two syntaxes according to the situation.</p>
 <h2 id="template-parameters">Template Parameters</h2>
 <p>Usually templates are used to render a view according to existing data. To give parameters to a template function you
 must give it a dictionary as first parameter. That dictionary will be available in the template as the <code>a</code> variable. In
@@ -176,7 +176,7 @@ in-a-file">tutorial</a>. There we explained it allows to put multiple template f
 <p>What was not explained is that you can actually define <code>{% function %}</code> constructs anywhere in Jiko. They will be
 translated to real JavaScript functions that can be called like any other template functions:</p>
 <div class="codehilite"><pre>{% function name=&quot;renderDate&quot; %}
-    <span class="nt">&lt;strong&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getDay</span><span class="p">()</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span><span class="cp">}</span><span class="nt">&lt;/strong&gt;</span>
+    <span class="nt">&lt;strong&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getMonth</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="cp">}</span>-<span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">getDay</span><span class="p">()</span><span class="cp">}</span><span class="nt">&lt;/strong&gt;</span>
 {% end %}
 
 <span class="nt">&lt;p&gt;</span>Today: %{renderDate({date: new Date()})}<span class="nt">&lt;/p&gt;</span>
@@ -203,7 +203,7 @@ a <code>{% module %}</code> construct at the beginning of the file.</p>
 {% function name=&quot;renderBill&quot; %}
     <span class="cp">%</span><span class="p">{</span><span class="n">renderCustomer</span><span class="p">({</span><span class="n">customer</span><span class="p">:</span> <span class="n">a</span><span class="o">.</span><span class="n">customer</span><span class="p">})}</span>
     <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">name</span><span class="cp">}</span><span class="nt">&lt;/p&gt;</span>
-    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">price</span><span class="o">.</span><span class="n">toFixed</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">precision</span><span class="p">)</span><span class="cp">}</span>$<span class="nt">&lt;/p&gt;</span>
+    <span class="nt">&lt;p&gt;</span><span class="cp">${</span><span class="n">a</span><span class="o">.</span><span class="n">product</span><span class="o">.</span><span class="n">price</span><span class="o">.</span><span class="n">toFixed</span><span class="p">(</span><span class="n">precision</span><span class="p">)</span><span class="cp">}</span>$<span class="nt">&lt;/p&gt;</span>
 {% end %}
 </pre></div>
 
