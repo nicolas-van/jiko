@@ -261,7 +261,7 @@ function declare(_, isNode) {
         "','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
         "var escape_function = function(s) {return ('' + (s == null ? '' : s))" +
         ".replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n" +
-        "var __copy__ = function(d) {var c = {}; for (k in d) { c[k] = d[k]; } return c;};\n";
+        "var __Obj__ = function(d) {for (k in d) { this[k] = d[k]; }};\n";
 
     var compile = function(tokens, options) {
         /* jshint loopfunc: true */
@@ -402,7 +402,7 @@ function declare(_, isNode) {
         if (isModule) {
             source = "(function() {\n" + indent_((options.noEsc ? '' : escapeDirectives) + source) + "})()";
         } else {
-            source = "function(a) {\n" + indent_("a = __copy__(a);\n" + source) + "}";
+            source = "function(a) {\n" + indent_("a = new __Obj__(a);\n" + source) + "}";
             if (! options.noEsc) {
                 source = "(function() {\n" + indent_(escapeDirectives + "return " + source + ";\n") + "})()";
             }
