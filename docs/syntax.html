@@ -96,7 +96,7 @@ useful.</p>
 <p>To ease debugging, Jiko was created to generate a JavaScript code as clean as possible. So you are invited to take a
 look at that generated code to precisely understand how Jiko works.</p>
 <h2 id="expression-escaping">Expression Escaping</h2>
-<p>The most basic task of a template engine is probably to output a variable. Jiko uses the <code>${}</code> syntax:</p>
+<p>The most basic task of a template engine is probably to output the result of an expression. Jiko uses the <code>${}</code> syntax:</p>
 <div class="codehilite"><pre>The current time is <span class="cp">${</span><span class="n">new</span> <span class="n">Date</span><span class="p">()</span><span class="o">.</span><span class="n">toString</span><span class="p">()</span><span class="cp">}</span>.
 </pre></div>
 
@@ -125,12 +125,13 @@ HTML.</p>
 </pre></div>
 
 
-<p>Inside a JavaScript block, you are free to use the <code>print()</code> function to output some text in the current template. When
-doing so, don't forget to escape the outputed text.</p>
+<p>Inside a JavaScript block, you are free to use the <code>o</code> variable which contains the text currentlry rendered to output
+some text in the current template. When doing so, don't forget to escape the outputed text. Just in case, <code>o</code> stands
+for <em>output</em>.</p>
 <div class="codehilite"><pre><span class="nt">&lt;ul&gt;</span>
     <span class="cp">&lt;%</span>
         <span class="p">[</span><span class="s">&quot;apple&quot;</span><span class="p">,</span> <span class="s">&quot;banana&quot;</span><span class="p">,</span> <span class="s">&quot;pie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="k">print</span><span class="p">(</span><span class="s">&quot;&lt;li&gt;&quot;</span> <span class="o">+</span> <span class="n">escape_function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">);</span>
+            <span class="n">o</span> <span class="o">+</span> <span class="s">&quot;&lt;li&gt;&quot;</span> <span class="o">+</span> <span class="n">escape_function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="cp">%&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>

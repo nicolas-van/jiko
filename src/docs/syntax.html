@@ -22,7 +22,7 @@ look at that generated code to precisely understand how Jiko works.
 Expression Escaping
 -------------------
 
-The most basic task of a template engine is probably to output a variable. Jiko uses the `${}` syntax:
+The most basic task of a template engine is probably to output the result of an expression. Jiko uses the `${}` syntax:
 
     :::html+mako
     The current time is ${new Date().toString()}.
@@ -59,14 +59,15 @@ To put one or multiple lines of JavaScript in the generated code, use the `<% %>
     %>
     <div>Let's meet tomorrow at this time: ${tomorrow.toString()}.</div>
 
-Inside a JavaScript block, you are free to use the `print()` function to output some text in the current template. When
-doing so, don't forget to escape the outputed text.
+Inside a JavaScript block, you are free to use the `o` variable which contains the text currentlry rendered to output
+some text in the current template. When doing so, don't forget to escape the outputed text. Just in case, `o` stands
+for *output*.
 
     :::html+mako
     <ul>
         <%
             ["apple", "banana", "pie"].forEach(function(el) {
-                print("<li>" + escape_function(el) + "</li>");
+                o + "<li>" + escape_function(el) + "</li>";
             });
         %>
     </ul>
