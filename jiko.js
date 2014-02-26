@@ -259,8 +259,8 @@ function declare(_, isNode) {
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;" +
         "','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-        "var escape_function = function(s) {return ('' + (s == null ? '' : s))" +
-        ".replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
+        "var escape_function = function(s) {return ('' + (!s ? '' : s))" +
+        ".replace(/[&<>\"'/]/g, function(a){return __ematches[a];});};\n";
 
     var compile = function(tokens, options) {
         /* jshint loopfunc: true */
