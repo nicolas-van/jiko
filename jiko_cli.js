@@ -34,7 +34,7 @@ compile.description('Compile a Jiko template file to a javascript file.')
         var namespace = namespaceFromFileName(filename);
         var compiled = jiko.compile(content);
         compiled = "(function() {\n" +
-            '"use strict"\n' +
+            '"use strict";\n' +
             "var declare = function() {\n" +
             "return " + compiled + ";\n" +
             "};\n" +

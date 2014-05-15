@@ -20,7 +20,7 @@
   },
   "devDependencies": {
     "grunt": "*",
-    "grunt-contrib-jshint": "*",
+    "grunt-contrib-jshint": "~0.10.0",
     "grunt-contrib-compress": ">=0.5.2",
     "grunt-mocha": "~0.4.1",
     "grunt-mocha-test": "~0.7.0",

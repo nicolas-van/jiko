@@ -259,8 +259,8 @@ function declare(_, isNode) {
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;" +
         "','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-        "var escape_function = function(s) {return ('' + (!s ? '' : s))" +
-        ".replace(/[&<>\"'/]/g, function(a){return __ematches[a];});};\n";
+        "var escapeFunction = function(s) {return ('' + (!s ? '' : s))\n" +
+        "    .replace(/[&<>\"'/]/g, function(a){return __ematches[a];});};\n";
 
     var compile = function(tokens, options) {
         /* jshint loopfunc: true */
@@ -384,7 +384,7 @@ function declare(_, isNode) {
                 source += _trim(value) + "\n";
                 break;
                 case "escape":
-                appendPrint("escape_function(" + _trim(value) + ")");
+                appendPrint("escapeFunction(" + _trim(value) + ")");
                 break;
                 default:
                 throw new Error("Unrecognized token");
