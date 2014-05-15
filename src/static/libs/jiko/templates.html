@@ -1,3 +1,4 @@
+
 {% module %}
 
 {% function name="niceTemplate" %}
@@ -23,16 +24,16 @@
     Hello
 {% end %}
 {% function name="test" %}
-    ${testVar}
+    ${a.testVar}
 {% end %}
 {% function name="test2" %}
-    <% _.each(lst, function(el) { %>
+    <% _.each(a.lst, function(el) { %>
     ${el}
     <% }
     ); %>
 {% end %}
 {% function name="test3" %}
-    % _.each(lst, function(el) { 
+    % _.each(a.lst, function(el) { 
     ${el}
     % }); 
 {% end %}
@@ -45,9 +46,6 @@
 {% end %}
 {% function name="testmacro" %}
     lalala
-{% end %}
-{% function name="testcallmacro" %}
-    %{engine.testmacro()}
 {% end %}
 {% function name="testescaping" %}
     % var x = "<div></div>";
@@ -75,7 +73,7 @@
 {% end %}
 {% function name="testFunctional2" %}
     <div>
-        %{ test() }
+        %{ a.test() }
     </div>
 {% end %}
 ## this is a comment
@@ -89,11 +87,11 @@
     Test
 {% end %}
 {% function name="printtest" %}
-    % print("Test")
+    % o += "Test"
 {% end %}
 {% function name="singleLinePreviousSpace" %}
     abc
-    % print("def")
+    % o += "def"
 {% end %}
 {% function name="multiSingleLine" %}
     % if (true

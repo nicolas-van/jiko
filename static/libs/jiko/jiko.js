@@ -255,13 +255,12 @@ function declare(_, isNode) {
         return tokens;
     };
 
-    var printDirectives = "var __p = '';\n" +
-        "var print = function(t) { __p += t; };\n";
+    var printDirectives = "var o = '';\n";
 
     var escapeDirectives = "var __ematches = {'&': '&amp;','<': '&lt;','>': '&gt;" +
         "','\"': '&quot;',\"'\": '&#x27;','/': '&#x2F;'};\n" +
-        "var escape_function = function(s) {return ('' + (s == null ? '' : s))" +
-        ".replace(/[&<>\"'/]/g, function(a){return __ematches[a]})};\n";
+        "var escapeFunction = function(s) {return ('' + (!s ? '' : s))\n" +
+        "    .replace(/[&<>\"'/]/g, function(a){return __ematches[a];});};\n";
 
     var compile = function(tokens, options) {
         /* jshint loopfunc: true */
@@ -281,9 +280,10 @@ function declare(_, isNode) {
             return tmp;
         } : function(x) { return x; };
         var appendPrint = function(t) {
-            source += t ? "__p += " + t + ";\n" : '';
+            source += t ? "o += " + t + ";\n" : '';
         };
         var escapePrint = function(t) {
+            t = rmWhite(t);
             t = (t || '').split("\n");
             for(var i = 0; i < t.length; i++) {
                 var v = t[i];
@@ -335,8 +335,19 @@ function declare(_, isNode) {
                 case "block":
                 if (value.type === "module") {
                     _.each(acceptedTokens, function(t) {
-                        checkValidity(t);
+                        switch (t.type) {
+                            case "text":
+                            checkValidity(t);
+                            break;
+                            case "comment":
+                            break;
+                            case "multiComment":
+                            break;
+                            default:
+                            throw new Error("Unexpected token type before {% module %}: " + t.type);
+                        }
                     });
+                    source = "";
                     isModule = true;
                 } else if (value.type === "function") {
                     var name = value.args.name;
@@ -373,7 +384,7 @@ function declare(_, isNode) {
                 source += _trim(value) + "\n";
                 break;
                 case "escape":
-                appendPrint("escape_function(" + _trim(value) + ")");
+                appendPrint("escapeFunction(" + _trim(value) + ")");
                 break;
                 default:
                 throw new Error("Unrecognized token");
@@ -385,13 +396,15 @@ function declare(_, isNode) {
         if (isModule) {
             source = "var exports = {};\n" + source + "return exports;\n";
         } else {
-            source = printDirectives + "with (context || {}) {\n" + indent_(source) + "}\nreturn __p;\n";
+            source = printDirectives + source + "return o;\n";
         }
-        source = (options.noEsc ? '' : escapeDirectives) + source;
         if (isModule) {
-            source = "(function() {\n" + indent_(source) + "})()";
+            source = "(function() {\n" + indent_((options.noEsc ? '' : escapeDirectives) + source) + "})()";
         } else {
-            source = "function(context) {\n" + indent_(source) + "}";
+            source = "function(a) {\n" + indent_(source) + "}";
+            if (! options.noEsc) {
+                source = "(function() {\n" + indent_(escapeDirectives + "return " + source + ";\n") + "})()";
+            }
         }
 
         return {
@@ -410,27 +423,27 @@ function declare(_, isNode) {
         options = options || {};
         var code = jiko.compile(text);
 
-        var debug = options.filename ? "\n//@ sourceURL=" + options.filename + "\n" : "";
+        var debug = options.fileName ? "\n//@ sourceURL=" + options.fileName + "\n" : "";
 
         return new Function("return " + code + ";" + debug)();
     };
 
-    jiko.evaluate = function(text, context) {
-        return jiko.loadTemplate(text)(context);
+    jiko.evaluate = function(text, a) {
+        return jiko.loadTemplate(text)(a);
     };
 
-    jiko.loadFile = function(filename) {
+    jiko.loadFile = function(fileName) {
         var result;
         if (! isNode) {
             var req = new XMLHttpRequest();
-            req.open("GET", filename, false);
+            req.open("GET", fileName, false);
             req.send();
             result = req.responseText;
         } else {
             var fs = require("fs");
-            result = fs.readFileSync(filename, "utf8");
+            result = fs.readFileSync(fileName, "utf8");
         }
-        return jiko.loadTemplate(result, {filename: filename});
+        return jiko.loadTemplate(result, {fileName: fileName});
     };
 
     return jiko;

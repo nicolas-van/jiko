@@ -15,6 +15,6 @@
     "tests"
   ],
   "dependencies": {
-    "jiko": "~0.8.0"
+    "jiko": "~0.10.1"
   }
 }

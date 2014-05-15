@@ -8,7 +8,7 @@ var path = require("path");
 
 
 var program = require('commander');
-program.version('0.7.0');
+program.version('0.8.3');
 
 var _trim = function(t) {
     return t.trim();
@@ -28,19 +28,22 @@ var namespaceFromFileName = function(filename) {
 
 var compile = program.command('compile <file>');
 compile.description('Compile a Jiko template file to a javascript file.')
-    .option('-o, --output', 'Do not automatically write file, outputs in console instead.')
+    .option('-o, --output', 'Does not automatically write file, outputs in console instead.')
     .action(function(filename, env){
         var content = fs.readFileSync(filename, "utf8");
         var namespace = namespaceFromFileName(filename);
         var compiled = jiko.compile(content);
         compiled = "(function() {\n" +
-            "var declare = " + compiled + ";\n" +
+            '"use strict";\n' +
+            "var declare = function() {\n" +
+            "return " + compiled + ";\n" +
+            "};\n" +
             "if (typeof(define) !== 'undefined') {\n" +
             "    define([], declare);\n" +
             "} else if (typeof(exports) !== 'undefined') {\n" +
             "    module.exports = declare();\n" +
             "} else {\n" +
-            "    " + namespace + " = declare();\n" +
+            "    window." + namespace + " = declare();\n" +
             "}\n" +
             "})();";
         if (compile.output) {

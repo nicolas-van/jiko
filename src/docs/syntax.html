@@ -29,11 +29,11 @@ The most basic task of a template engine is probably to output the result of an 
 
 Expressions inside `${}` must simply be any kind of valid JavaScript expression.
 
-Every time the `${}` construct is used, `escape_function()` will be called with the result of the expression evaluation.
-`escape_function()` is a function defined in all Jiko compiled templates. Its default behavior is to escape HTML. So all
+Every time the `${}` construct is used, `escapeFunction()` will be called with the result of the expression evaluation.
+`escapeFunction()` is a function defined in all Jiko compiled templates. Its default behavior is to escape HTML. So all
 expressions given to `${}` will be escaped.
 
-Please note that you could redefine `escape_function()` to use another escaping mechanism if you don't intend to output
+Please note that you could redefine `escapeFunction()` to use another escaping mechanism if you don't intend to output
 HTML.
 
 Expression Substitution
@@ -45,7 +45,7 @@ If you know that the variable you want to output is some valid HTML and you don'
     :::html+mako
     <div>I like to put some %{"<em>emphasis</em>"} some times.</div>
 
-Expressions given to `%{}` are not processed through `escape_function()` like with `${}`.
+Expressions given to `%{}` are not processed through `escapeFunction()` like with `${}`.
 
 JavaScript Blocks
 -----------------
@@ -67,7 +67,7 @@ stands for *output*.
     <ul>
         <%
             ["apple", "banana", "pie"].forEach(function(el) {
-                o + "<li>" + escape_function(el) + "</li>";
+                o + "<li>" + escapeFunction(el) + "</li>";
             });
         %>
     </ul>

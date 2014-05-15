@@ -4,7 +4,6 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         jshint: {
-            files: ['jiko.js', 'test.js', 'jiko_cli.js'],
             options: {
                 es3: true, // ie 7 compatibility
                 eqeqeq: true, // no == or !=
@@ -16,6 +15,16 @@ module.exports = function(grunt) {
                 trailing: true, // trailing whitespaces are ugly
                 maxlen: 120, // maximum characters per line
                 camelcase: true, // force camelCase
+            },
+            main: {
+                files: {
+                    src: ['jiko.js', 'test.js', 'jiko_cli.js', 'test_cli.js'],
+                },
+            },
+            compiled: {
+                files: {
+                    src: ['test_templates/exfunction.js', 'test_templates/exmodule.js'],
+                }
             },
         },
         mocha: {
@@ -30,10 +39,22 @@ module.exports = function(grunt) {
         },
         mochaTest: {
             main: {
-                src: ['test.js'],
+                src: ['test.js', 'test_cli.js'],
                 options: {
-                    ui: "qunit",
                 }
+            }
+        },
+        shell: {
+            compileTest1: {
+                command: "./jiko_cli.js compile ./test_templates/exfunction.html",
+            },
+            compileTest2: {
+                command: "./jiko_cli.js compile ./test_templates/exmodule.html",
+            },
+        },
+        clean: {
+            tests: {
+                src: ["test_templates/*.js"],
             }
         },
         compress: {
@@ -48,15 +69,20 @@ module.exports = function(grunt) {
                     {src: 'package.json', dest: '.'},
                 ],
             }
-        }
+        },
     });
 
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-mocha');
     grunt.loadNpmTasks('grunt-mocha-test');
     grunt.loadNpmTasks('grunt-contrib-compress');
+    grunt.loadNpmTasks('grunt-contrib-clean');
+    grunt.loadNpmTasks('grunt-shell');
 
-    grunt.registerTask('test', ['jshint', "mocha", "mochaTest"]);
+    grunt.registerTask("nodeTest", ["mochaTest"]);
+    grunt.registerTask("compileTests", ["shell:compileTest1", "shell:compileTest2"]);
+    grunt.registerTask("browserTest", ["compileTests", "jshint:compiled", "mocha", "clean:tests"]);
+    grunt.registerTask('test', ['jshint:main', "nodeTest", "browserTest"]);
 
     grunt.registerTask('dist', ['compress']);
 

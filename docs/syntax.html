@@ -102,10 +102,10 @@ look at that generated code to precisely understand how Jiko works.</p>
 
 
 <p>Expressions inside <code>${}</code> must simply be any kind of valid JavaScript expression.</p>
-<p>Every time the <code>${}</code> construct is used, <code>escape_function()</code> will be called with the result of the expression evaluation.
-<code>escape_function()</code> is a function defined in all Jiko compiled templates. Its default behavior is to escape HTML. So all
+<p>Every time the <code>${}</code> construct is used, <code>escapeFunction()</code> will be called with the result of the expression evaluation.
+<code>escapeFunction()</code> is a function defined in all Jiko compiled templates. Its default behavior is to escape HTML. So all
 expressions given to <code>${}</code> will be escaped.</p>
-<p>Please note that you could redefine <code>escape_function()</code> to use another escaping mechanism if you don't intend to output
+<p>Please note that you could redefine <code>escapeFunction()</code> to use another escaping mechanism if you don't intend to output
 HTML.</p>
 <h2 id="expression-substitution">Expression Substitution</h2>
 <p>If you know that the variable you want to output is some valid HTML and you don't want to escape it you should use the
@@ -114,7 +114,7 @@ HTML.</p>
 </pre></div>
 
 
-<p>Expressions given to <code>%{}</code> are not processed through <code>escape_function()</code> like with <code>${}</code>.</p>
+<p>Expressions given to <code>%{}</code> are not processed through <code>escapeFunction()</code> like with <code>${}</code>.</p>
 <h2 id="javascript-blocks">JavaScript Blocks</h2>
 <p>To put one or multiple lines of JavaScript in the generated code, use the <code>&lt;% %&gt;</code> construct:</p>
 <div class="codehilite"><pre><span class="cp">&lt;%</span>
@@ -131,7 +131,7 @@ stands for <em>output</em>.</p>
 <div class="codehilite"><pre><span class="nt">&lt;ul&gt;</span>
     <span class="cp">&lt;%</span>
         <span class="p">[</span><span class="s">&quot;apple&quot;</span><span class="p">,</span> <span class="s">&quot;banana&quot;</span><span class="p">,</span> <span class="s">&quot;pie&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">forEach</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="p">{</span>
-            <span class="n">o</span> <span class="o">+</span> <span class="s">&quot;&lt;li&gt;&quot;</span> <span class="o">+</span> <span class="n">escape_function</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">;</span>
+            <span class="n">o</span> <span class="o">+</span> <span class="s">&quot;&lt;li&gt;&quot;</span> <span class="o">+</span> <span class="n">escapeFunction</span><span class="p">(</span><span class="n">el</span><span class="p">)</span> <span class="o">+</span> <span class="s">&quot;&lt;/li&gt;&quot;</span><span class="p">;</span>
         <span class="p">});</span>
     <span class="cp">%&gt;</span>
 <span class="nt">&lt;/ul&gt;</span>

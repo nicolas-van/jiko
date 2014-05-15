@@ -1,0 +1,15 @@
+{% module %}
+
+<%
+    var y = "yyy";
+%>
+
+{% function name="func1" %}
+    <div>
+{% end %}
+
+{% function name="func2" %}
+    %{func1()}
+    zzz
+    ${y}
+{% end %}
