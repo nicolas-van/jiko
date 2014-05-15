@@ -34,7 +34,7 @@ compile.description('Compile a Jiko template file to a javascript file.')
         var namespace = namespaceFromFileName(filename);
         var compiled = jiko.compile(content);
         compiled = "(function() {\n" +
-            '"use strict"' +
+            '"use strict"\n' +
             "var declare = function() {\n" +
             "return " + compiled + ";\n" +
             "};\n" +
@@ -43,7 +43,7 @@ compile.description('Compile a Jiko template file to a javascript file.')
             "} else if (typeof(exports) !== 'undefined') {\n" +
             "    module.exports = declare();\n" +
             "} else {\n" +
-            "    " + namespace + " = declare();\n" +
+            "    window." + namespace + " = declare();\n" +
             "}\n" +
             "})();";
         if (compile.output) {
