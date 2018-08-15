@@ -2,7 +2,7 @@
 
 {% raw  %}
 
-[![Build Status](https://travis-ci.org/nicolas-van/jiko.svg?branch=master)](https://travis-ci.org/nicolas-van/jiko)
+[![Build Status](https://travis-ci.org/nicolas-van/jiko.svg?branch=master)](https://travis-ci.org/nicolas-van/jiko) [![npm](https://img.shields.io/npm/v/jiko.svg)](https://www.npmjs.com/package/jiko)
 
 Jiko is a modern and easy to use template engine for Javascript. Its objective is to provide to Javascript programmers a
 way to write templates with an engine as powerful as server-side state of the art template engines like Jinja and Mako.
