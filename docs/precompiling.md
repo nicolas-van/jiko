@@ -2,6 +2,8 @@
 Precompilation
 ==============
 
+{% raw  %}
+
 For production environments, it is recommended to precompile Jiko templates.
 
 Installation of the Compiler
@@ -42,3 +44,5 @@ Grunt
 -----
 
 No Grunt plugin exists yet. But you can create one if you want, just contact me on Github if you need information.
+
+{% endraw %}

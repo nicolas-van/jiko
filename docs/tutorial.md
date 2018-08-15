@@ -1,6 +1,8 @@
 Tutorial
 ========
 
+{% raw  %}
+
 Installation for On-the-Fly Evaluation
 --------------------------------------
 
@@ -111,3 +113,5 @@ Going Further
 This tutorial covered the basic about loading and executing templates. To use Jiko effectively you should at least
 take a look at the [Syntax guide](/docs/syntax.html). You can also take a look at the complete
 [Documentation](/docs/docs.html).
+
+{% endraw %}

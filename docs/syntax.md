@@ -2,6 +2,8 @@
 Syntax Guide
 ============
 
+{% raw  %}
+
 Before explaining the syntax of Jiko in details, it's important to notice that all Jiko templates are compiled to
 JavaScript code. Every syntax element has an equivalent in JavaScript and understanding the resulting code can be
 useful.
@@ -180,3 +182,5 @@ because Jiko will try to interpret it. To solve this problem Jiko supports escap
     \${this will directly appear in the HTML}
 
 The `\` can itself be escaped by doubling it, etc...
+
+{% endraw %}
