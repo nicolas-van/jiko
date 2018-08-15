@@ -1,25 +1,19 @@
 
 // only runs in node
 
-(function() {
-"use strict";
-
-var assert = require("assert");
 var _ = require("underscore");
+var assert = require("assert");
 var fs = require("fs");
-var sh = require("execSync");
-
-describe("Jiko cli", function() {
+var execSync = require("child_process").execSync;
 
 var rm = function(f) {
     if (fs.existsSync(f))
         fs.unlinkSync(f);
 };
 
-it("function", function() {
+test("function", function() {
     try {
-        var code = sh.run('./jiko_cli.js compile ./test_templates/exfunction.html');
-        assert.equal(code, 0);
+        var code = execSync('./jiko_cli.js compile ./test_templates/exfunction.html');
         var tmpl = require("./test_templates/exfunction");
         var res = tmpl();
         assert.equal(res.trim().replace(/\s+/g, " "), "Hello World");
@@ -28,10 +22,9 @@ it("function", function() {
     }
 });
 
-it("module", function() {
+test("module", function() {
     try {
-        var code = sh.run('./jiko_cli.js compile ./test_templates/exmodule.html');
-        assert.equal(code, 0);
+        var code = execSync('./jiko_cli.js compile ./test_templates/exmodule.html');
         var tmpl = require("./test_templates/exmodule");
         var res = tmpl.func2();
         assert.equal(res.trim().replace(/\s+/g, " "), "<div> zzz yyy");
@@ -39,7 +32,3 @@ it("module", function() {
         rm("./test_templates/exmodule.js");
     }
 });
-
-});
-
-})();

@@ -27,13 +27,13 @@
     ${a.testVar}
 {% end %}
 {% function name="test2" %}
-    <% _.each(a.lst, function(el) { %>
+    <% a.lst.forEach(function(el) { %>
     ${el}
     <% }
     ); %>
 {% end %}
 {% function name="test3" %}
-    % _.each(a.lst, function(el) { 
+    % a.lst.forEach(function(el) { 
     ${el}
     % }); 
 {% end %}
