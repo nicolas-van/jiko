@@ -12,26 +12,22 @@ the browser:
 
 ### In Node.js
 
-    :::bash
     npm install jiko
 
 To include jiko in your project:
 
-    :::javascript
     var jiko = require("jiko");
 
 ### In the Browser
 
 You can download the latest version [directly](https://unpkg.com/jiko/) or use [Bower](http://bower.io/):
 
-    :::bash
     bower install jiko
 
 In the browser you can use any AMD or CommonJS loader. You can also include directly the Jiko source file and
 underscore. When you do so, don't forget Jiko has a dependency on [underscore](http://underscorejs.org/), which is
 bundled in the release archive and downloaded if you use Bower.
 
-    :::html
     <script type="text/javascript" src="underscore.js"></script>
     <script type="text/javascript" src="jiko.js"></script>
 
@@ -42,7 +38,6 @@ A First Template
 
 Now it's time for the classic Hello World. Copy-paste this example:
 
-    :::javascript
     console.log(jiko.evaluate("Hello ${'Wo' + 'rld'}"));
 
 That's it, you evaluated your first Jiko template!
@@ -56,14 +51,12 @@ problem Jiko templates can be loaded from a file.
 
 As an example create a file named `template.html` in the folder of your application and put this code in it:
 
-    :::html+mako
     <div>
         <p>Hello, my name is ${a.name}</p>
     </div>
 
 Now in your application use this code:
 
-    :::javascript
     var template = jiko.loadFile("template.html");
 
 `jiko.loadFile` has a different behavior depending you are in node.js or a browser. In node.js it will load a file
@@ -74,7 +67,6 @@ The `template` variable is now a function representing our template that can be 
 example template we used an attribute named `name` contained in the `a` object we also have to pass a value for that
 attribute for the template to work:
 
-    :::javascript
     console.log(template({'name': 'Nicolas'}));
 
 Multiple Templates in a File
@@ -84,8 +76,6 @@ When using template engines in JavaScript application, experience tells us that 
 you add the fact that it's not recommended to load too many files for performance reasons it can be quite useful to
 be able to define multiple templates in a single file. This is possible in Jiko. Take a look at the `mytemplates.html`
 file:
-
-    :::html+mako
 
     {% module %}
 
@@ -100,7 +90,6 @@ file:
 When loading a file beginning with `{% module %}` using `jiko.loadFile()`, the result will not be a function. It will
 be a dictionary containing all the functions defined in the file. Example:
 
-    :::javascript
     var mytemplates = jiko.loadFile("mytemplate.html");
     console.log(mytemplates.firstTemplate());
     /* >>> This is template number 1 */
