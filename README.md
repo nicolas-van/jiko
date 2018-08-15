@@ -5,23 +5,24 @@
 Jiko is a modern and easy to use template engine for Javascript. Its objective is to provide to Javascript programmers a
 way to write templates with an engine as powerful as server-side state of the art template engines like Jinja and Mako.
 
-    :::html+mako
-    <%
-        var rows = _.map(_.range(0, 10), function(el) { return _.range(0, 10); });
-    %>
-    {% function name="makeRow" %}
-        <tr>
-        % a.row.forEach(function(name) {
-            <td>${name}</td>
-        % });
-        </tr>
-    {% end %}
+```
+<%
+    var rows = _.map(_.range(0, 10), function(el) { return _.range(0, 10); });
+%>
+{% function name="makeRow" %}
+    <tr>
+    % a.row.forEach(function(name) {
+        <td>${name}</td>
+    % });
+    </tr>
+{% end %}
 
-    <table>
-        % rows.forEach(function(row) {
-            %{makeRow({row: row})}
-        % });
-    </table>
+<table>
+    % rows.forEach(function(row) {
+        %{makeRow({row: row})}
+    % });
+</table>
+```
 
 Jiko's features:
 
