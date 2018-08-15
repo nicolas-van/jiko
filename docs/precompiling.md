@@ -11,7 +11,6 @@ Installation of the Compiler
 
 Start by installing the jiko npm package globally.
 
-    :::bash
     sudo npm install -g jiko
 
 Usage of the Compiler
@@ -20,7 +19,6 @@ Usage of the Compiler
 Now you have access to the `jiko` command line tool. You can use that tool to compile a file using its `compile`
 sub-command:
 
-    :::bash
     jiko compile mytemplates.html
 
 This command will generate a file named `mytemplates.js` next to `mytemplate.html`.
@@ -37,7 +35,6 @@ part](/docs/syntax.html#modules).)
 
 You can have more information about the Jiko compiler using `--help`:
 
-    :::bash
     jiko --help
 
 Grunt
