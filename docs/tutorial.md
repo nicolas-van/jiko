@@ -10,7 +10,7 @@ There are two ways to use Jiko. The recommended way for production environments 
 server-side. But to test Jiko it's faster to compile templates on-the-fly. Here is how to do it in both node.js and
 the browser:
 
-###In Node.js
+### In Node.js
 
     :::bash
     npm install jiko
@@ -20,7 +20,7 @@ To include jiko in your project:
     :::javascript
     var jiko = require("jiko");
 
-###In the Browser
+### In the Browser
 
 You can download the latest version on the [download page](/releases.html) or use [Bower](http://bower.io/):
 
