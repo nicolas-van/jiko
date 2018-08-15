@@ -38,7 +38,6 @@ if (typeof(exports) !== "undefined") { // nodejs
 
 
 function declare(_, isNode) {
-    console.log("vars", _, isNode);
     var jiko = {};
 
     var jsescapes = {
