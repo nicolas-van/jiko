@@ -27,6 +27,7 @@
   "bin": {
     "jiko": "jiko_cli.js"
   },
+  "main": "jiko.js",
   "scripts": {
     "test": "jest"
   }
