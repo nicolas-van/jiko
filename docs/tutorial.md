@@ -22,7 +22,7 @@ To include jiko in your project:
 
 ### In the Browser
 
-You can download the latest version on the [download page](/releases.html) or use [Bower](http://bower.io/):
+You can download the latest version [directly](https://unpkg.com/jiko/) or use [Bower](http://bower.io/):
 
     :::bash
     bower install jiko
@@ -111,7 +111,7 @@ Going Further
 -------------
 
 This tutorial covered the basic about loading and executing templates. To use Jiko effectively you should at least
-take a look at the [Syntax guide](/docs/syntax.html). You can also take a look at the complete
-[Documentation](/docs/docs.html).
+take a look at the [Syntax guide](./syntax.md). You can also take a look at the complete
+[Documentation](./docs.md).
 
 {% endraw %}
