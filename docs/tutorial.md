@@ -7,31 +7,13 @@ Installation for On-the-Fly Evaluation
 --------------------------------------
 
 There are two ways to use Jiko. The recommended way for production environments is to precompile the templates
-server-side. But to test Jiko it's faster to compile templates on-the-fly. Here is how to do it in both node.js and
-the browser:
-
-### In Node.js
+server-side. But to test Jiko it's faster to compile templates on-the-fly. Here is how to install it:
 
     npm install jiko
 
 To include jiko in your project:
 
     var jiko = require("jiko");
-
-### In the Browser
-
-You can download the latest version [directly](https://unpkg.com/jiko/) or use [Bower](http://bower.io/):
-
-    bower install jiko
-
-In the browser you can use any AMD or CommonJS loader. You can also include directly the Jiko source file and
-underscore. When you do so, don't forget Jiko has a dependency on [underscore](http://underscorejs.org/), which is
-bundled in the release archive and downloaded if you use Bower.
-
-    <script type="text/javascript" src="underscore.js"></script>
-    <script type="text/javascript" src="jiko.js"></script>
-
-If you directly include the source files the methods of Jiko will be available under the `jiko` global variable.
 
 A First Template
 ----------------
