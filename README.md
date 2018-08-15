@@ -1,5 +1,7 @@
 # Jiko
 
+{% raw  %}
+
 Jiko is a modern and easy to use template engine for Javascript. Its objective is to provide to Javascript programmers a
 way to write templates with an engine as powerful as server-side state of the art template engines like Jinja and Mako.
 
@@ -34,3 +36,5 @@ Jiko's features:
 Jiko is still in development. You can help to improve it on Github.
 
 Interested? Take a look at the [Tutorial](./docs/tutorial.md).
+
+{% endraw %}
